@@ -37,6 +37,8 @@ app.on('ready', function () {
 
     var mainWindow = createWindow('main', {
         width: 1000,
+        height: 600,
+        minwidth: 1000,
         height: 600
     });
 

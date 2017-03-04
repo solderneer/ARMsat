@@ -18,6 +18,6 @@ console.log('The author of this app is:', appDir.read('package.json', 'json').au
 //user code starts here
 document.addEventListener('DOMContentLoaded', function () {
     //document.getElementById('greet').innerHTML = greet();
-    document.getElementById('platform-info').innerHTML = os.platform();
-    document.getElementById('env-name').innerHTML = env.name;
+    //document.getElementById('platform-info').innerHTML = os.platform();
+    //document.getElementById('env-name').innerHTML = env.name;
 });
