@@ -1,6 +1,8 @@
 @logo-blue: #2a7fff;
 @logo-grey: #999999;
-
+html {
+    outline-style:none;
+ }
 body {
     margin: 0px;
     vertical-align: top;
@@ -38,50 +40,81 @@ p{
     margin-top: 15px;
     margin-left: 10px;
 }
-/* Dropdown Button */
-.dropbtn {
-    background-color: #212121;;
-    color: @logo-grey;
-    padding: 5px;
-    font-size: 10px;
-    border: none;
-    cursor: pointer;
-    width: 170px;
-    height: 20px;
+
+.big {
+  font-size: 1.2em;
 }
 
-.dropdown {
-    position: relative;
-    display: block;
-    float: right;
-    margin: 10px;
-    width: 170px;
-    height: 20px;
+.small {
+  font-size: .7em;
 }
 
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
+.square {
+  width: .7em;
+  height: .7em;
+  margin: .5em;
+  display: inline-block;
 }
 
-.dropdown-content a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
+.custom-dropdown {
+  position: relative;
+  display: block;
+  float: right;
+  margin: 10px;
 }
 
-.dropdown-content a:hover {background-color: @logo-blue}
-
-.dropdown:hover .dropdown-content {
-    display: block;
+.custom-dropdown select {
+  background-color: #212121;
+  color: @logo-grey;
+  font-size: inherit;
+  font-family: 'Roboto';
+  font-weight: 600;
+  padding: .5em;
+  padding-right: 2.5em;	
+  border: 0;
+  margin: 0;
+  border-radius: 3px;
+  text-indent: 0.01px;
+  text-overflow: '';
 }
 
-.dropdown:hover .dropbtn {
-    background-color: @logo-blue;
+.custom-dropdown::before,
+.custom-dropdown::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
 }
 
+.custom-dropdown::after { /*  Custom dropdown arrow */
+  content: "\25BC";
+  height: 1em;
+  font-size: .625em;
+  line-height: 1;
+  right: 1.2em;
+  top: 50%;
+  margin-top: -.5em;
+}
+
+.custom-dropdown::before { /*  Custom dropdown arrow cover */
+  width: 2em;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 0 3px 3px 0;
+}
+
+.custom-dropdown select[disabled] {
+  color: rgba(0,0,0,.3);
+}
+
+.custom-dropdown select[disabled]::after {
+  color: rgba(0,0,0,.1);
+}
+
+.custom-dropdown::before {
+  background-color: rgba(0,0,0,.15);
+}
+
+.custom-dropdown::after {
+  color: rgba(0,0,0,.4);
+}

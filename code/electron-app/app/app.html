@@ -9,7 +9,7 @@
 
     <!--helper classes to manage menus and links-->
     <script src="helpers/context_menu.js"></script>
-    <script src="helpers/external_links.js"></script>
+    <script src="helpers/external_links.js"></script>npm
 
     <!-- Main CSS stylesheet compiled from less-->
     <link href="stylesheets/main.css" rel="stylesheet" type="text/css">
@@ -23,25 +23,40 @@
         <div id="topbar">
 
             <img id="logo" src="assets/logo.png"/>
-
-            <div class="dropdown">
-            <button class="dropbtn">Dropdown</button>
-                <div class="dropdown-content">
-                    <a href="#">Link 1</a>
-                    <a href="#">Link 2</a>
-                    <a href="#">Link 3</a>
-                </div>
+            
+            <div class="custom-dropdown small">
+                <select>
+                    <option>COM port</option>
+                    <option>COM1</option>  
+                    <option>COM2</option>
+                    <option>COM3</option>
+                    <option>COM4</option>
+                </select>
             </div>
-        </div>
 
+            <div class="custom-dropdown small">
+                <select>
+                    <option>Baud Rate:</option>
+                    <option>9600</option>  
+                    <option>115200</option>
+                </select>
+            </div>
+
+            <div class="custom-dropdown small">
+                <select>
+                    <option>Camera</option>
+                    <option>Microsoft LifeCam</option>  
+                    <option>Microsoft LifeCam(2)</option>
+                </select>
+            </div>
+
+        </div>
+        
         <div id="subtopbar">
             <p>
                 <span class="date">2017-03-03</span> @ <span class="time">2017-03-03</span> -- Running - OS: <span class="OS">Windows</span>, Configurator: <span class="version">1.0.0</span>
             </p>
         </div>
-
-        <i class="fa fa-camera-retro fa-5x"></i> fa-5x
-
     </div>
 
 </body>
