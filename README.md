@@ -77,3 +77,6 @@ Electron was chosen for the desktop app as it allows us to code in conventional 
 
 ## Conclusion
 In conclusion, our system seeks to implement a user friendly implementation of a BalloonSat which is capable of quantifying properties of the atmosphere through the use of a multitude of sensors.
+
+## Credits to group members
+Thanks to my groupmates Siidheesh and Marcus.

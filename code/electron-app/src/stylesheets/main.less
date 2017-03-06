@@ -1,8 +1,9 @@
 @logo-blue: #2a7fff;
 @logo-grey: #999999;
 
-html {
-   -webkit-appearance:none;
+* {
+   appearance: none;
+   outline: none;
  }
 body {
     margin: 0px;
@@ -46,13 +47,13 @@ p{
     height: 50px;
     position: absolute;
     right: 12px;
-    top: 65px;
+    top: 45px;
 }
 
 .right {
     position: absolute;
     right: 14px;
-    top: 120px;
+    top: 100px;
     font-family: "Roboto";
     font-size: 12px;
 }
@@ -82,6 +83,7 @@ p{
   display: block;
   float: right;
   margin: 10px;
+  //box-shadow: 1px 1px 20px darken(@logo-grey, 50%); (to maintain flat look)
 }
 
 .custom-dropdown select {
