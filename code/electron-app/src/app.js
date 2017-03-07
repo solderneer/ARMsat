@@ -6,7 +6,7 @@ import os from 'os'; // native node.js module
 import { remote } from 'electron'; // native electron module
 import jetpack from 'fs-jetpack'; // module loaded from npm
 import env from './env';
-var SerialPort = require("serialport");
+//var SerialPort = require("serialport");
 
 //import { greet } from './hello_world/hello_world'
 
@@ -65,13 +65,13 @@ if(seconds < 10){
 today = dd + '/' + mm + '/' + yyyy;
 var time = hour + ':' + minutes + ':' + seconds + ' ' + day;
  
- SerialPort.list(function(err ,ports) {
+ /*SerialPort.list(function(err ,ports) {
     ports.forEach(function(port) {
         console.log(port.comName);
         console.log(port.pnpId);
         console.log(port.manufacturer);
     });
- });
+ });*/
 
 document.addEventListener('DOMContentLoaded', function () {
     //document.getElementById('greet').innerHTML = greet();
