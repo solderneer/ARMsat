@@ -1,11 +1,14 @@
 {
-  "name": "electron-boilerplate",
-  "productName": "Electron Boilerplate",
-  "description": "Starter for your Electron application",
-  "version": "7.5.0",
+  "name": "ARMsat",
+  "productName": "ARMsat",
+  "description": "A configurator for a BalloonSat",
+  "version": "1.0.0",
   "author": "Sudharshan <sudharshan@makerforce.io>",
   "copyright": "© 2017, MakerForce.",
-  "homepage": "http://example.com",
+  "repository": {
+    "type":"git",
+    "url":"https://github.com/solderneer/ARMsat"
+  },
   "license": "MIT",
   "main": "app/background.js",
   "build": {
