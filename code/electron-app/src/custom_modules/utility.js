@@ -40,7 +40,7 @@ export var listMediaDevices = function () {
         devices.forEach(function(device) {
             //console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
             if(device.kind == "videoinput") {
-                document.getElementById('Camera').innerHTML = document.getElementById('Camera').innerHTML + "<option>" + device.label + "</option>";
+                document.getElementById('camera-input').innerHTML = document.getElementById('camera-input').innerHTML + "<option>" + device.label + "</option>";
             }
         });
     })
