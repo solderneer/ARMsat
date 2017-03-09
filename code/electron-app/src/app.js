@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }*/
 
-        //attempting to connect to camera
+        //Connect to camera
         consoleLog('Connecting to camera...');
         navigator.mediaDevices.enumerateDevices().then(function(devices) {
             devices.forEach(function(device) {
@@ -82,12 +82,20 @@ document.addEventListener('DOMContentLoaded', function () {
                         },
                         function() {
                             consoleError('The selected camera could not be accessed');
+                            break;
                         }
                     );
 
                 }
             });
         })
+
+        //Connect to serialport
+        var port = new SerialPort(selCOMport, { baudRate: selBaudrate}, function (err) {
+            if (err) {
+                return console.log('Error:', err.message);
+            }
+        });
 
         document.getElementById('connect-btn').src = "assets/unlink.png";
         document.getElementById('connect-btn').id = "disconnect-btn";
