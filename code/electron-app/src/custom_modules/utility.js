@@ -32,6 +32,10 @@ export var consoleError = function (x) {
     document.getElementById('console').innerHTML = "<span class='red'>" + x +"</span>"
 }
 
+export var consoleSuccess = function (x) {
+    document.getElementById('console').innerHTML = "<span class='green'>" + x +"</span>"
+}
+
 export var listMediaDevices = function () {
     if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
         console.log("enumerateDevices() not supported.");
@@ -67,6 +71,8 @@ export var connectRoutine = function () {
     /**
      * Connect Routine
      */
+
+        document.getElementById('camera').hidden = false;
         var e = document.getElementById('camera-input');
         var f = document.getElementById('baudrate');
         var g = document.getElementById('com-port');
@@ -103,7 +109,7 @@ export var connectRoutine = function () {
                 
                 if (device.label == selCam) {
                     var constraints = { deviceId: { exact: device.deviceId } };
-                    navigator.webkitGetUserMedia({video: constraints},
+                        var stream = navigator.webkitGetUserMedia({video: constraints},
                         function(stream) {
                             document.getElementById('camera').src = URL.createObjectURL(stream);
                             consoleLog('Connected to: ' + device.label)

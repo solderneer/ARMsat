@@ -7,7 +7,14 @@ import { remote } from 'electron'; // native electron module
 import jetpack from 'fs-jetpack'; // module loaded from npm
 import env from './env';
 var SerialPort = require("serialport");
-import { date, time, consoleLog, listMediaDevices, consoleError, listSerialDevices, connectRoutine } from './custom_modules/utility'
+import {    date, 
+            time, 
+            consoleLog, 
+            listMediaDevices, 
+            consoleError, 
+            listSerialDevices, 
+            connectRoutine, 
+            consoleSuccess } from './custom_modules/utility'
 
 console.log('Loaded environment variables:', env);
 
@@ -31,10 +38,15 @@ document.addEventListener('DOMContentLoaded', function () {
     listMediaDevices();
 
     document.getElementById("connect-btn").addEventListener('click', function (e) {
-
-        //Connection routine
-        connectRoutine();
-
+        
+            if(document.getElementsByClassName('lessright')[0] == null){
+                //connect to the selected devices
+               connectRoutine();
+            }
+            else {
+                //gonna be lazy and reload the page for a disconnect
+                location.reload();
+            }
 
         }); 
     });
