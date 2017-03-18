@@ -1,56 +1,26 @@
 @logo-blue: #2a7fff;
 @logo-grey: #999999;
+@nav-bar: darken(#424242, 5%);
+@sub-nav: #212121;
 
-* {
-   appearance: none;
-   outline: none;
- }
-
-body {
-    margin: 0px;
-    vertical-align: top;
-}
-
-p{
-    margin: 0px;
-}
-
-.red {
-  color: red;
-}
-
-.green {
-  color: green;
-}
-
-.menu {
-    color: white;
-    width: 100vw;
-    font-family: 'Roboto', sans-serif;
-}
-
-#topbar {
-    background: darken(#424242, 5%);
-    height: 120px;
-}
-
-#subtopbar {
-    background: #212121;
-    height: 15px;
-    padding: 5px;
-    font-size: 12px;
+.navbar {
+    background-color: @nav-bar;
     color: @logo-grey;
+    height: 130px;
+    font-family: 'Roboto', sans-serif;
+    color: white;
+    border-radius: 0px;
+    margin: 0px;
 }
 
-#platform-info , .version {
-    font-weight: 600;
-}
-
-#logo {
+.logo {
     height: 90px;
-    margin-top: 15px;
-    margin-left: 10px;
+    position: absolute;
+    top: 15px;
+    left: 15px;
 }
+
+//C
 
 #connect-btn {
     height: 50px;
@@ -166,4 +136,22 @@ p{
   color: rgba(0,0,0,.4);
 }
 
+.red {
+  color: red;
+}
 
+.green {
+  color: green;
+}
+
+#subtopbar {
+    background: #212121;
+    height: 27px;
+    padding: 5px;
+    font-size: 12px;
+    color: @logo-grey;
+}
+
+#platform-info , .version {
+    font-weight: 600;
+}
