@@ -11,57 +11,18 @@
     <script src="helpers/context_menu.js"></script>
     <script src="helpers/external_links.js"></script>
 
+    <link href="C:\Users\s_sud\Desktop\git-repos\ARMsat\code\electron-app\node_modules\bootstrap\dist\css\bootstrap.min.css" rel="stylesheet" type="text/css">
     <!-- Main CSS stylesheet compiled from less-->
     <link href="stylesheets/main.css" rel="stylesheet" type="text/css">
 
     <!-- Main app things -->
+    <script>
+        window.jQuery = window.$ = require('jquery');
+    </script>
+    <script src="C:\Users\s_sud\Desktop\git-repos\ARMsat\code\electron-app\node_modules\bootstrap\dist\js\bootstrap.min.js"></script>
     <script src="app.js"></script>
 </head>
 <body>
 
-    <div class="menu">
-        <div id="topbar">
-
-            <img id="logo" src="assets/logo.png"/>
-            
-            <span class="right">Connect</span>
-            <img src="assets/link.png" id="connect-btn"/>
-        
-            <div class="custom-dropdown small">
-                <select id="com-port">
-                    <option selected="true" disabled="disabled">COM port</option>
-                </select>
-            </div>
-
-            <div class="custom-dropdown small">
-                <select id="baudrate">
-                    <option selected="true" disabled="disabled">Baud Rate:</option>
-                    <option>9600</option>  
-                    <option>14400</option>
-                    <option>19200</option>
-                    <option>28800</option>
-                    <option>38400</option>
-                    <option>56000</option>
-                    <option>57600</option>
-                    <option>115200</option>
-                </select>
-            </div>
-
-            <div class="custom-dropdown small">
-                <select id="camera-input">
-                    <option selected="true" disabled="disabled">Camera</option>
-                </select>
-            </div>
-
-        </div>
-        
-        <div id="subtopbar">
-            <p>
-                <span id="date"></span> @ <span id="time"></span> -- <span id="console">Running - OS: <span id="platform-info"></span>, Configurator: <span class="version">1.0.0</span></span>
-            </p>
-        </div>
-    </div>
-
-      <video id="camera" autoplay></video>
 </body>
 </html>
