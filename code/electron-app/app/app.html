@@ -35,35 +35,35 @@
         </button>
         <a class="navbar-brand" href="#"><img src="assets/logo.png" class="logo"/></a>
         </div>
-        <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Camera <span class="caret"></span></a>
-            <ul class="dropdown-menu">
-                <li><a href="#">Camera 1</a></li>
-                <li><a href="#">Camera 2</a></li>
-                <li><a href="#">Camera 3</a></li>
-            </ul>
-            </li>
-            <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Baudrate <span class="caret"></span></a>
-            <ul class="dropdown-menu">
-                <li><a href="#">9600</a></li>
-                <li><a href="#">14400</a></li>
-                <li><a href="#">19200</a></li>
-                <li><a href="#">28800</a></li>
-                <li><a href="#">38400</a></li>
-                <li><a href="#">56000</a></li>
-                <li><a href="#">57600</a></li>
-                <li><a href="#">115200</a></li>
-            </ul>
-            </li>
-            <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">COM port <span class="caret"></span></a>
-            <ul class="dropdown-menu">
-            </ul>
-            </li>
+        <span class="right">Connect</span>
             <img src="assets/link.png" id="connect-btn"/>
-        </ul>
+        
+            <div class="custom-dropdown small">
+                <select id="com-port">
+                    <option selected="true" disabled="disabled">COM port</option>
+                </select>
+            </div>
+
+            <div class="custom-dropdown small">
+                <select id="baudrate">
+                    <option selected="true" disabled="disabled">Baud Rate:</option>
+                    <option>9600</option>  
+                    <option>14400</option>
+                    <option>19200</option>
+                    <option>28800</option>
+                    <option>38400</option>
+                    <option>56000</option>
+                    <option>57600</option>
+                    <option>115200</option>
+                </select>
+            </div>
+
+            <div class="custom-dropdown small">
+                <select id="camera-input">
+                    <option selected="true" disabled="disabled">Camera</option>
+                </select>
+            </div>
+
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
     </nav>
