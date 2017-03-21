@@ -14,7 +14,7 @@ import {    date,
             consoleError, 
             listSerialDevices, 
             connectRoutine, 
-            consoleSuccess } from './custom_modules/utility'
+            consoleSuccess } from './custom_modules/utility';
 
 console.log('Loaded environment variables:', env);
 
@@ -36,6 +36,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     //listing available camera devices
     listMediaDevices();
+
+    artificialHorizon.initAndRun();
 
     document.getElementById("connect-btn").addEventListener('click', function (e) {
         
