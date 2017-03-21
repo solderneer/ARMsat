@@ -160,10 +160,50 @@
   color: @logo-blue;
 }
 
+.table {
+  color: #212121;
+  margin-top: 10px;
+}
 
 #camera {
   margin: 10px;
 }
+
 .camera {
   margin: 10px;
 }
+
+.compass {
+	position: relative;
+	width: 260px;
+	height: 260px;
+	margin: 20px auto;
+	background: #222;
+	padding: 20px;
+	border-radius: 40px;
+	border: 5px solid #444;
+	overflow: hidden;
+}
+
+.compass .disc {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	z-index: 200;
+	background: url('http://dev.rvltn.eu/compass/compass.svg');
+	width: 230px;
+	height: 230px;
+	background-size: 100%;
+}
+
+.compass .arrow {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	z-index: 1000;
+	background: url('http://dev.rvltn.eu/compass/arrow.svg');
+	width: 230px;
+	height: 230px;
+	background-size: 100%;
+}
+

@@ -75,8 +75,44 @@
     </div>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-3 col-lg-offset-3">
+            <div class="col-lg-3">
+                <table class="table table-hover table-bordered">
+                    <tr class="header">
+                        <th>Cell #</th>
+                        <th>Cell voltage</th>
+                    </tr>
+                     <tr class="">
+                        <th>1</th>
+                        <th>0.00000000 V</th>
+                    </tr>
+                     <tr class="">
+                        <th>2</th>
+                        <th>0.00000000 V</th>
+                    </tr>
+                     <tr class="">
+                        <th>3</th>
+                        <th>0.00000000 V</th>
+                    </tr>
+                    <tr class="header">
+                        <th>Total Cell Voltage</th>
+                        <th>0.00000000 V</th>
+                    </tr>
+                    <tr class="header">
+                        <th>Total Cell Current</th>
+                        <th>0.00000000 A</th>
+                    </tr>
+                </table>
+                <div class="compass">
+                    <div class="arrow"></div>
+                    <div class="disc" id="compassDiscImg"></div>
+                </div>
+            </div>
+            <div class="col-lg-3">
                 <video id="camera" autoplay hidden></video>
+            </div>
+            <div class="col-lg-3">
+                 <canvas width="270" height="270" id="canvas"></canvas>
+                <div id="top"></div>
             </div>
         </div>
         <div class="row">
@@ -90,12 +126,12 @@
                     <tr>
                         <th>1</th>
                         <th>Pressure</th>
-                        <th>0.00000000</th>
+                        <th>0.00000000 Pa</th>
                     </tr>
                     <tr>
                         <th>2</th>
                         <th>Alititude</th>
-                        <th>0.00000000</th>
+                        <th>0.00000000 m</th>
                     </tr>
                     <tr>
                         <th>3</th>
@@ -105,28 +141,17 @@
                     <tr>
                         <th>4</th>
                         <th>Wind Speed</th>
-                        <th>0.00000000</th>
+                        <th>0.00000000 m/s</th>
                     </tr>
                     <tr>
                         <th>5</th>
                         <th>Gas concentration (O3)</th>
-                        <th>0.00000000</th>
+                        <th>0.00000000 ppm</th>
                     </tr>
                     <tr>
                         <th>6</th>
                         <th>Humidity</th>
-                        <th>0.00000000</th>
-                    </tr>
-                    <tr>
-                        <th>7</th>
-                        <th>Battery Voltage</th>
-                        <th>0.00000000</th>
-                    </tr>
-                    <tr>
-                        <th>8</th>
-                        <th>Battery Current</th>
-                        <th>0.00000000</th>
-                    </tr>
+                        <th>0.00000000 rel. </th>
                 </table>
             </div>
         </div>
