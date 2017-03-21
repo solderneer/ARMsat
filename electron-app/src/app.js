@@ -43,7 +43,21 @@ document.addEventListener('DOMContentLoaded', function () {
         
             if(document.getElementsByClassName('lessright')[0] == null){
                 //connect to the selected devices
-               connectRoutine();
+                connectRoutine();
+                document.getElementById("topsection").addEventListener('mouseover', function () {
+                    console.log('triggered1');
+                    document.getElementsByClassName('navbar')[0].hidden = false;
+                });
+
+                document.getElementById("topsection").addEventListener('mouseleave', function () {
+                    console.log('triggered2');
+                    setTimeout(myFunction, 5000)
+
+                    function myFunction() {
+                        console.log('triggered3');
+                        document.getElementsByClassName('navbar')[0].hidden = true;
+                    }
+                });
             }
             else {
                 //gonna be lazy and reload the page for a disconnect

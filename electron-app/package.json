@@ -35,7 +35,8 @@
     "fs-jetpack": "^0.10.2",
     "serialport": "^4.0.7",
     "jquery": "^3.2.0",
-    "bootstrap": "^3.3.7"
+    "bootstrap": "^3.3.7",
+    "cstruct": "0.2.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",

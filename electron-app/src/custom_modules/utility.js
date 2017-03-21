@@ -1,4 +1,33 @@
 var SerialPort = require("serialport");
+let struct = require('cstruct');
+var jquery = require('jquery');
+
+const Sensors = struct `
+    int16_t humidity, temperature;
+    int32_t pressure;
+    uint16_t altitude, particulate_matter, ozone_concentration, wind_speed;
+    float hmc_x, hmc_y, hmc_z;
+`
+
+const vc = struct `
+    uint16_t voltage_3v3, voltage_5v, current, voltage_cell1, voltage_cell2, voltage_cell3, voltage_batt;
+`
+
+const Control = struct `
+    uint16_t generic_cmd, pan_pos, tilt_pos;
+`
+
+const payload = struct `
+    uint16_t sanity_check1;
+    uint32_t type;
+    int16_t humidity, temperature;
+    int32_t pressure;
+    uint16_t altitude, particulate_matter, ozone_concentration, wind_speed;
+    float hmc_x, hmc_y, hmc_z;
+    uint16_t voltage_3v3, voltage_5v, current, voltage_cell1, voltage_cell2, voltage_cell3, voltage_batt;
+    uint16_t generic_cmd, pan_pos, tilt_pos;
+    uint16_t crc, sanity_check2;
+`
 
 export var date = function () {
     var today = new Date();
@@ -67,6 +96,12 @@ export var listSerialDevices = function () {
         });
 }
 
+function toHexString(byteArray) {
+  return byteArray.map(function(byte) {
+    return ('0' + (byte & 0xFF).toString(16)).slice(-2);
+  }).join('')
+}
+
 export var connectRoutine = function () {
     /**
      * Connect Routine
@@ -96,7 +131,7 @@ export var connectRoutine = function () {
             consoleError('No baudrate selected');
             return;
         }
-        /*no COM port selected error
+        /*
         if(selCOMport == "COM port"){
             consoleError('No COM port selected');
             return;
@@ -122,11 +157,25 @@ export var connectRoutine = function () {
             });
         })
 
-        /*Connect to serialport
-        var port = new SerialPort(selCOMport, { baudRate: selBaudrate}, function (err) {
+        selBaudrate = parseInt(selBaudrate);
+        /*
+        //Connect to serialport
+        var port = new SerialPort(selCOMport, { baudRate: selBaudrate,
+                                                parser: SerialPort.parsers.byteDelimiter([190,186])}, function (err) {
             if (err) {
                 return console.log('Error:', err.message);
             }
+        });
+
+        let thing = { sanity_check1:0xcafe, sanity_check2:0xbabe, crc:0xd00d, type:1 };
+        console.log(payload.writeLE(thing));
+        console.log(typeof payload.writeLE(thing));
+
+        port.on('data', function (data) {
+            console.log(toHexString(data)+"\n");
+            //let raw = new Buffer(data, 'binary');
+            //let procdata = payload.readLE(raw);
+            //console.log(procdata);
         });*/
 
         document.getElementById('connect-btn').src = "assets/unlink.png";

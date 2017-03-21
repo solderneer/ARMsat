@@ -118,26 +118,11 @@ var artificialHorizon = (function() {
       canvas = document.getElementById("canvas");
       context = canvas.getContext("2d");
 
-      var backgroundLoaded = false, topLoaded = false;
-      
-      var backgroundImage = new Image();
-      backgroundImage.onload = function() {
-        backgroundLoaded = true;
-        if (topLoaded) {
-          draw();
-        }
-      }
-      backgroundImage.src = "images/bg.jpg";
-
       var topImage = new Image();
       topImage.onload = function() {
-        topLoaded = true;
-        if (backgroundLoaded) {
           draw();
-        }
       }
-      topImage.src = "images/tool_320.png";
-
+      topImage.src = "images/clipped.png";
     }
 
   };
