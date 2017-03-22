@@ -38,9 +38,9 @@ document.addEventListener('DOMContentLoaded', function () {
     //listing available camera devices
     listMediaDevices();
 
-    var attitude = $.flightIndicator('#attitude', 'attitude', {roll:50, pitch:-20, size:290, showBox : true});
-    var heading = $.flightIndicator('#heading', 'heading', {heading:150, showBox:true, size:290});
-    var altimeter = $.flightIndicator('#altimeter', 'altimeter', {size:290, showBox : true});
+    var attitude = $.flightIndicator('#attitude', 'attitude', {roll:50, pitch:-20, size:325, showBox : true});
+    var heading = $.flightIndicator('#heading', 'heading', {heading:150, showBox:true, size:325});
+    var altimeter = $.flightIndicator('#altimeter', 'altimeter', {size:325, showBox : true});
 
     document.getElementById("connect-btn").addEventListener('click', function (e) {
 
@@ -63,20 +63,6 @@ document.addEventListener('DOMContentLoaded', function () {
             if(document.getElementsByClassName('lessright')[0] == null){
                 //connect to the selected devices
                 connectRoutine();
-                document.getElementById("topsection").addEventListener('mouseover', function () {
-                    console.log('triggered1');
-                    document.getElementsByClassName('navbar')[0].hidden = false;
-                });
-
-                document.getElementById("topsection").addEventListener('mouseleave', function () {
-                    console.log('triggered2');
-                    setTimeout(myFunction, 5000)
-
-                    function myFunction() {
-                        console.log('triggered3');
-                        document.getElementsByClassName('navbar')[0].hidden = true;
-                    }
-                });
             }
             else {
                 //gonna be lazy and reload the page for a disconnect
