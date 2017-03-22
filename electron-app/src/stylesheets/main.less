@@ -171,63 +171,11 @@
 
 #camera {
   margin: 10px;
-  width: 660px;
+  width: 670px;
 }
 
 .camera {
   margin: 10px;
-}
-
-.compass {
-	position: relative;
-	width: 260px;
-	height: 260px;
-	margin: 20px auto;
-	background: #222;
-	padding: 20px;
-	border-radius: 40px;
-	border: 5px solid #444;
-	overflow: hidden;
-}
-
-.compass .disc {
-	position: absolute;
-	top: 10px;
-	left: 10px;
-	z-index: 200;
-	background: url('http://dev.rvltn.eu/compass/compass.svg');
-	width: 230px;
-	height: 230px;
-	background-size: 100%;
-}
-
-.compass .arrow {
-	position: absolute;
-	top: 10px;
-	left: 10px;
-	z-index: 1000;
-	background: url('http://dev.rvltn.eu/compass/arrow.svg');
-	width: 230px;
-	height: 230px;
-	background-size: 100%;
-}
-
-
-#canvas {
-	position: absolute;
-	top: 319px;
-	right: 65px;
-}
-
-#top {
-	position: absolute;
-	top: 290px;
-	right: 40px;
-	width: 260px;
-	height: 260px;
-	background: transparent url(../images/clipped.png) no-repeat;
-	background-position: 50% 50%;
-  background-size: contain;
 }
 
 .cramp {
@@ -237,5 +185,50 @@
 
 .panel {
   margin: 10px;
+}
+
+
+div.instrument {
+  width: 250px;
+  height: 250px;
+  position: relative;
+  display: inline-block ;
+  overflow: hidden;
+}
+
+/* The box containing any element of an indicator */
+div.instrument .box {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Default transformations */
+
+div.instrument.attitude div.roll {
+  transform: rotate(0deg);
+}
+div.instrument.attitude div.roll div.pitch {
+  top: 0%;
+}
+div.instrument.heading div.yaw {
+  transform: rotate(0deg);
+}
+div.instrument.vario div.vario {
+  transform: rotate(0deg);
+}
+div.instrument.speed div.airspeed {
+  transform: rotate(90deg);
+}
+div.instrument.altimeter div.pressure {
+  transform: rotate(40deg);
+}
+div.instrument.altimeter div.needle {
+  transform: rotate(90deg);
+}
+div.instrument.altimeter div.needleSmall {
+  transform: rotate(90deg);
 }
 

@@ -11,7 +11,9 @@
     <script src="helpers/context_menu.js"></script>
     <script src="helpers/external_links.js"></script>
 
-    <link href="C:\Users\s_sud\Desktop\git-repos\ARMsat\electron-app\node_modules\bootstrap\dist\css\bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="stylesheets/font-awesome.css">
+    <link href="stylesheets/flightindicators.css" type="text/css">
+    <link href="C:\Users\s_sud\Desktop\git-repos\ARMsat\electron-app\node_modules\bootstrap\dist\css\bootstrap.min.css" rel="stylesheet" type="text/css"> 
     <!-- Main CSS stylesheet compiled from less-->
     <link href="stylesheets/main.css" rel="stylesheet" type="text/css">
 
@@ -20,8 +22,7 @@
         window.jQuery = window.$ = require('jquery');
     </script>
     <script src="C:\Users\s_sud\Desktop\git-repos\ARMsat\electron-app\node_modules\bootstrap\dist\js\bootstrap.min.js"></script>
-    <script src="RequestAnimationFrame.js"></script>
-    <script src="artificial-horizon.js"></script>
+    <script src="js/jquery.flightindicators.js"></script>
     <script src="app.js"></script>
 </head>
 <body>
@@ -77,7 +78,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-3">
-                <div class="panel panel-default cramp">
+                <div class="panel panel-default cramp batt">
                     <div class="panel-heading">
                          <h3 class="panel-title ">Battery Monitoring</h3>
                     </div>
@@ -110,25 +111,14 @@
                         </table>
                     </div>
                 </div>
-                <div class="compass">
-                    <div class="arrow"></div>
-                    <div class="disc" id="compassDiscImg"></div>
-                </div>
+                <span id="attitude"></span>
             </div>
             <div class="col-lg-6">
                 <video id="camera" autoplay hidden></video>
             </div>
             <div class="col-lg-3">
-                <div class="panel panel-danger">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Warnings</h3>
-                    </div>
-                    <div class="panel-body">
-                        This panel is supposed to contain warnings!
-                    </div>
-                    </div>
-                    <canvas width="210" height="210" id="canvas"></canvas>
-                <div id="top"></div>
+                <span id="heading"></span>
+                <span id="altimeter"></span>
             </div>
         </div>
         <div class="row">

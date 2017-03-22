@@ -7,6 +7,7 @@ import { remote } from 'electron'; // native electron module
 import jetpack from 'fs-jetpack'; // module loaded from npm
 import env from './env';
 var SerialPort = require("serialport");
+window.jQuery = window.$ = require('jquery');
 import {    date, 
             time, 
             consoleLog, 
@@ -37,9 +38,27 @@ document.addEventListener('DOMContentLoaded', function () {
     //listing available camera devices
     listMediaDevices();
 
-    artificialHorizon.initAndRun();
+    var attitude = $.flightIndicator('#attitude', 'attitude', {roll:50, pitch:-20, size:290, showBox : true});
+    var heading = $.flightIndicator('#heading', 'heading', {heading:150, showBox:true, size:290});
+    var altimeter = $.flightIndicator('#altimeter', 'altimeter', {size:290, showBox : true});
 
     document.getElementById("connect-btn").addEventListener('click', function (e) {
+
+                // Update at 20Hz
+                var increment = 0;
+                setInterval(function() {
+                    // Attitude update
+                    attitude.setRoll(30*Math.sin(increment/10));
+                    attitude.setPitch(50*Math.sin(increment/20));
+                    
+                    // Heading update
+                    heading.setHeading(increment);
+
+                    // Altimeter update
+                    altimeter.setAltitude(10*increment);
+                    altimeter.setPressure(1000+3*Math.sin(increment/50));
+                    increment++;
+                }, 50);
         
             if(document.getElementsByClassName('lessright')[0] == null){
                 //connect to the selected devices
