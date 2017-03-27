@@ -182,3 +182,35 @@ export var connectRoutine = function () {
         document.getElementsByClassName('right')[0].className = "lessright";
         document.getElementsByClassName('lessright')[0].innerHTML = "Disconnect";
 }
+
+
+export var tabSwitch = function (y) {
+    document.getElementById(y).addEventListener('click', function(currentActive){
+        var x = document.getElementById(y);
+        console.log(x.classList.length);
+        for(var i=0; i<x.classList.length; i++){
+                console.log(x.classList[i]);
+                if(x.classList[i] == "active"){
+                    break;
+                }
+            }
+        if(x.classList[i] == "active"){}
+            
+        else{
+            console.log(currentActive);
+            for(var i=0; i<currentActive.classList.length; i++){
+                console.log(currentActive.classList[i]);
+                if(currentActive.classList[i] == "active"){
+                    break;
+                }
+            }
+            currentActive.classList[i] = "";
+            currentActive.hidden = true;
+            x.className = x.className + " active";
+            x.hidden = false;
+        }
+    });
+}
+
+
+

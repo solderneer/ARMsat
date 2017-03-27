@@ -15,7 +15,8 @@ import {    date,
             consoleError, 
             listSerialDevices, 
             connectRoutine, 
-            consoleSuccess } from './custom_modules/utility';
+            consoleSuccess,
+            tabSwitch       } from './custom_modules/utility';
 
 console.log('Loaded environment variables:', env);
 
@@ -43,7 +44,14 @@ document.addEventListener('DOMContentLoaded', function () {
     var altimeter = $.flightIndicator('#altimeter', 'altimeter', {size:325, showBox : true});
 
     document.getElementById("connect-btn").addEventListener('click', function (e) {
-
+        
+            if(document.getElementsByClassName('lessright')[0] == null){
+                //connect to the selected devices
+                connectRoutine();
+                tabSwitch("home");
+                tabSwitch("telemetry");
+                tabSwitch("graphing");
+                tabSwitch("settings");
                 // Update at 20Hz
                 var increment = 0;
                 setInterval(function() {
@@ -59,10 +67,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     altimeter.setPressure(1000+3*Math.sin(increment/50));
                     increment++;
                 }, 50);
-        
-            if(document.getElementsByClassName('lessright')[0] == null){
-                //connect to the selected devices
-                connectRoutine();
             }
             else {
                 //gonna be lazy and reload the page for a disconnect
