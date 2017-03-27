@@ -83,8 +83,11 @@
                 <li class="tab-element" id="graphing"><a href="#" class="style">Graphing</a></li>
                 <li class="tab-element" id="settings"><a href="#" class="style">Settings</a></li>
             </ul>
-            <div class="Home">
+            <div id="Home">
                 <div class="row">
+                    <div class="col-lg-6">
+                        <video id="camera" autoplay hidden></video>
+                    </div>
                     <div class="col-lg-3">
                         <div class="panel panel-default cramp batt">
                             <div class="panel-heading">
@@ -125,16 +128,13 @@
                         </div>
                         <span id="attitude"></span>
                     </div>
-                    <div class="col-lg-6">
-                        <video id="camera" autoplay hidden></video>
-                    </div>
                     <div class="col-lg-3">
                         <span id="heading"></span>
                         <span id="altimeter"></span>
                     </div>
                 </div>
             </div>
-            <div class="Telemetry" hidden>
+            <div id="Telemetry" hidden>
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="panel panel-default cramp">

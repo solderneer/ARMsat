@@ -36,7 +36,8 @@
     "serialport": "^4.0.7",
     "jquery": "^3.2.0",
     "bootstrap": "^3.3.7",
-    "cstruct": "0.2.0"
+    "cstruct": "^0.2.0",
+    "chart.js": "^2.5.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",

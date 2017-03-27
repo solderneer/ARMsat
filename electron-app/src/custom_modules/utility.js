@@ -184,8 +184,8 @@ export var connectRoutine = function () {
 }
 
 
-export var tabSwitch = function (y) {
-    document.getElementById(y).addEventListener('click', function(currentActive){
+export var tabSwitch = function (y, currentActive) {
+    document.getElementById(y).addEventListener('click', function(c){
         var x = document.getElementById(y);
         console.log(x.classList.length);
         for(var i=0; i<x.classList.length; i++){
@@ -197,20 +197,37 @@ export var tabSwitch = function (y) {
         if(x.classList[i] == "active"){}
             
         else{
-            console.log(currentActive);
-            for(var i=0; i<currentActive.classList.length; i++){
-                console.log(currentActive.classList[i]);
-                if(currentActive.classList[i] == "active"){
-                    break;
-                }
-            }
-            currentActive.classList[i] = "";
-            currentActive.hidden = true;
+            resetTabs();
+            
             x.className = x.className + " active";
-            x.hidden = false;
+            switch(x.id) {
+                case "home":
+                     document.getElementById('Home').hidden = false;
+                     break;
+                 case "telemetry":
+                     document.getElementById('Telemetry').hidden = false;
+                     break;   
+                case "graphing":
+                     document.getElementById('Graphing').hidden = false;
+                     break;
+                case "settings":
+                     document.getElementById('Settings').hidden = false;
+                     break;
+            }
         }
     });
 }
 
+function resetTabs() {
+    document.getElementById('home').className = "tab-element";
+    document.getElementById('telemetry').className = "tab-element";
+    document.getElementById('graphing').className = "tab-element";
+    document.getElementById('settings').className = "tab-element";
+
+    document.getElementById('Home').hidden = true;
+    document.getElementById('Telemetry').hidden = true;
+    //document.getElementById('Graphing').hidden = true;
+    //document.getElementById('Settings').hidden = true;
+}
 
 
