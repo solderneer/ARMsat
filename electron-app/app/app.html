@@ -78,16 +78,13 @@
         </div>
         <div class="container-fluid">
             <ul class="nav nav-pills tabbing">
-                <li class="tab-element" id="home"><a href="#" class="style">Home</a></li>
+                <li class="tab-element active" id="home"><a href="#" class="style">Home</a></li>
                 <li class="tab-element" id="telemetry"><a href="#" class="style">Telemetry</a></li>
                 <li class="tab-element" id="graphing"><a href="#" class="style">Graphing</a></li>
                 <li class="tab-element" id="settings"><a href="#" class="style">Settings</a></li>
             </ul>
             <div id="Home">
                 <div class="row">
-                    <div class="col-lg-6">
-                        <video id="camera" autoplay hidden></video>
-                    </div>
                     <div class="col-lg-3">
                         <div class="panel panel-default cramp batt">
                             <div class="panel-heading">
@@ -128,6 +125,9 @@
                         </div>
                         <span id="attitude"></span>
                     </div>
+                    <div class="col-lg-6">
+                        <video id="camera" autoplay hidden></video>
+                    </div>
                     <div class="col-lg-3">
                         <span id="heading"></span>
                         <span id="altimeter"></span>
@@ -136,7 +136,7 @@
             </div>
             <div id="Telemetry" hidden>
                 <div class="row">
-                    <div class="col-lg-12">
+                    <div class="col-lg-6">
                         <div class="panel panel-default cramp">
                             <div class="panel-heading">
                                     <h3 class="panel-title">Telemetry</h3>
