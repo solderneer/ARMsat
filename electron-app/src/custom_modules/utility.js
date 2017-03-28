@@ -231,7 +231,7 @@ function resetTabs() {
 
     document.getElementById('Home').hidden = true;
     document.getElementById('Telemetry').hidden = true;
-    //document.getElementById('Graphing').hidden = true;
+    document.getElementById('Graphing').hidden = true;
     //document.getElementById('Settings').hidden = true;
 }
 
