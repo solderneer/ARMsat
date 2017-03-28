@@ -21,12 +21,10 @@ C_SRCS += \
 ../system/src/stm32f4xx/stm32f4xx_hal_pwr_ex.c \
 ../system/src/stm32f4xx/stm32f4xx_hal_rcc.c \
 ../system/src/stm32f4xx/stm32f4xx_hal_rcc_ex.c \
-../system/src/stm32f4xx/stm32f4xx_hal_sd.c \
 ../system/src/stm32f4xx/stm32f4xx_hal_spi.c \
 ../system/src/stm32f4xx/stm32f4xx_hal_tim.c \
 ../system/src/stm32f4xx/stm32f4xx_hal_tim_ex.c \
-../system/src/stm32f4xx/stm32f4xx_hal_uart.c \
-../system/src/stm32f4xx/stm32f4xx_ll_sdmmc.c 
+../system/src/stm32f4xx/stm32f4xx_hal_uart.c 
 
 OBJS += \
 ./system/src/stm32f4xx/stm32f4xx_hal.o \
@@ -46,12 +44,10 @@ OBJS += \
 ./system/src/stm32f4xx/stm32f4xx_hal_pwr_ex.o \
 ./system/src/stm32f4xx/stm32f4xx_hal_rcc.o \
 ./system/src/stm32f4xx/stm32f4xx_hal_rcc_ex.o \
-./system/src/stm32f4xx/stm32f4xx_hal_sd.o \
 ./system/src/stm32f4xx/stm32f4xx_hal_spi.o \
 ./system/src/stm32f4xx/stm32f4xx_hal_tim.o \
 ./system/src/stm32f4xx/stm32f4xx_hal_tim_ex.o \
-./system/src/stm32f4xx/stm32f4xx_hal_uart.o \
-./system/src/stm32f4xx/stm32f4xx_ll_sdmmc.o 
+./system/src/stm32f4xx/stm32f4xx_hal_uart.o 
 
 C_DEPS += \
 ./system/src/stm32f4xx/stm32f4xx_hal.d \
@@ -71,19 +67,17 @@ C_DEPS += \
 ./system/src/stm32f4xx/stm32f4xx_hal_pwr_ex.d \
 ./system/src/stm32f4xx/stm32f4xx_hal_rcc.d \
 ./system/src/stm32f4xx/stm32f4xx_hal_rcc_ex.d \
-./system/src/stm32f4xx/stm32f4xx_hal_sd.d \
 ./system/src/stm32f4xx/stm32f4xx_hal_spi.d \
 ./system/src/stm32f4xx/stm32f4xx_hal_tim.d \
 ./system/src/stm32f4xx/stm32f4xx_hal_tim_ex.d \
-./system/src/stm32f4xx/stm32f4xx_hal_uart.d \
-./system/src/stm32f4xx/stm32f4xx_ll_sdmmc.d 
+./system/src/stm32f4xx/stm32f4xx_hal_uart.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
 system/src/stm32f4xx/%.o: ../system/src/stm32f4xx/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: Cross ARM GNU C Compiler'
-	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra  -g3 -DDEBUG -DTRACE -DOS_USE_TRACE_SEMIHOSTING_DEBUG -DSTM32F411xE -I"../include" -I"../system/include" -I"../system/include/cmsis" -I"../system/include/stm32f4xx" -I"../system/include/cmsis/device" -I"../Middlewares/Third_Party/FatFs/src/drivers" -I"../Middlewares/Third_Party/FatFs/src" -std=gnu11 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "$@" "$<"
+	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra  -g3 -DDEBUG -DTRACE -DOS_USE_TRACE_SEMIHOSTING_DEBUG -DSTM32F411xE -I"../include" -I"../system/include" -I"../system/include/cmsis" -I"../system/include/stm32f4xx" -I"../system/include/cmsis/device" -std=gnu11 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

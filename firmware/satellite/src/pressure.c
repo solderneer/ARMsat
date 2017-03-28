@@ -2,7 +2,7 @@
  * pressure.c
  *
  *  Created on: 30 Jan 2017
- *      Author: sidxb
+ *      Author: Siidheesh Theivasigamani
  */
 #include "pressure.h"
 

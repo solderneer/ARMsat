@@ -2,7 +2,7 @@
  * pressure.h
  *
  *  Created on: 30 Jan 2017
- *      Author: sidxb
+ *      Author: Siidheesh Theivasigamani
  */
 
 #ifndef PRESSURE_H_

@@ -2,7 +2,7 @@
  * uart.c
  *
  *  Created on: 29 Jan 2017
- *      Author: sidxb
+ *      Author: Siidheesh Theivasigamani
  */
 #include "uart.h"
 

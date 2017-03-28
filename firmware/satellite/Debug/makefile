@@ -14,9 +14,6 @@ RM := rm -rf
 -include system/src/cortexm/subdir.mk
 -include system/src/cmsis/subdir.mk
 -include src/subdir.mk
--include Middlewares/Third_Party/FatFs/src/option/subdir.mk
--include Middlewares/Third_Party/FatFs/src/drivers/subdir.mk
--include Middlewares/Third_Party/FatFs/src/subdir.mk
 -include subdir.mk
 -include objects.mk
 
@@ -51,38 +48,38 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 SECONDARY_FLASH += \
-nucleo411.hex \
+eg1310_sat.hex \
 
 SECONDARY_SIZE += \
-nucleo411.siz \
+eg1310_sat.siz \
 
 
 # All Target
-all: nucleo411.elf secondary-outputs
+all: eg1310_sat.elf secondary-outputs
 
 # Tool invocations
-nucleo411.elf: $(OBJS) $(USER_OBJS)
+eg1310_sat.elf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Cross ARM GNU C++ Linker'
-	arm-none-eabi-g++ -mcpu=cortex-m4 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra  -g3 -T mem.ld -T libs.ld -T sections.ld -nostartfiles -Xlinker --gc-sections -L"../ldscripts" -Wl,-Map,"nucleo411.map" --specs=nano.specs -o "nucleo411.elf" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-g++ -mcpu=cortex-m4 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra  -g3 -T mem.ld -T libs.ld -T sections.ld -nostartfiles -Xlinker --gc-sections -L"../ldscripts" -Wl,-Map,"eg1310_sat.map" --specs=nano.specs -o "eg1310_sat.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
-nucleo411.hex: nucleo411.elf
+eg1310_sat.hex: eg1310_sat.elf
 	@echo 'Invoking: Cross ARM GNU Create Flash Image'
-	arm-none-eabi-objcopy -O ihex "nucleo411.elf"  "nucleo411.hex"
+	arm-none-eabi-objcopy -O ihex "eg1310_sat.elf"  "eg1310_sat.hex"
 	@echo 'Finished building: $@'
 	@echo ' '
 
-nucleo411.siz: nucleo411.elf
+eg1310_sat.siz: eg1310_sat.elf
 	@echo 'Invoking: Cross ARM GNU Print Size'
-	arm-none-eabi-size --format=berkeley "nucleo411.elf"
+	arm-none-eabi-size --format=berkeley "eg1310_sat.elf"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(CC_DEPS)$(C++_DEPS)$(OBJS)$(C_UPPER_DEPS)$(CXX_DEPS)$(SECONDARY_FLASH)$(SECONDARY_SIZE)$(ASM_DEPS)$(S_UPPER_DEPS)$(C_DEPS)$(CPP_DEPS) nucleo411.elf
+	-$(RM) $(CC_DEPS)$(C++_DEPS)$(OBJS)$(C_UPPER_DEPS)$(CXX_DEPS)$(SECONDARY_FLASH)$(SECONDARY_SIZE)$(ASM_DEPS)$(S_UPPER_DEPS)$(C_DEPS)$(CPP_DEPS) eg1310_sat.elf
 	-@echo ' '
 
 secondary-outputs: $(SECONDARY_FLASH) $(SECONDARY_SIZE)

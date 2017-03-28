@@ -2,7 +2,7 @@
  * xbee.h
  *
  *  Created on: 30 Jan 2017
- *      Author: sidxb
+ *      Author: Siidheesh Theivasigamani
  */
 
 #ifndef XBEE_H_
@@ -138,12 +138,11 @@ typedef enum {
 	XBEE_CHECKSUM
 } xbee_rx_state;
 
-extern void Xbee_init(UART_HandleTypeDef* h, CRC_HandleTypeDef* c);
+extern void Xbee_init(UART_HandleTypeDef* h);
 void Xbee_checksum(void);
 void Xbee_prepareTxFrame(void);
 void Xbee_createTxPacket(uint8_t* payload, size_t payloadSize);
 void Xbee_sendTxPacket(void);
-void Xbee_sendSensorData(uint32_t pressure, uint32_t temp, uint32_t alt, uint32_t heading);
 void Xbee_sendPayload(uint8_t* payload, size_t payloadSize);
 void Xbee_rxStateMachine(uint8_t cmdbuf);
 uint16_t xrx_read(uint8_t **buf, size_t* len);

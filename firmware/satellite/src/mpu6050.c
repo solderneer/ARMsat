@@ -66,9 +66,11 @@ MPU6050_Result_t MPU6050_Init(MPU6050_t* DataStruct, MPU6050_Device_t DeviceNumb
 
 	MPU6050_SetGyroscope(DataStruct, GyroscopeSensitivity);
 	MPU6050_SetAccelerometer(DataStruct, AccelerometerSensitivity);
-	//assuming I2C is already initialized
+
+	return MPU6050_Result_Ok;
 }
-MPU6050_Result_t MPU6050_SetGyroscope(MPU6050_t* DataStruct, MPU6050_Gyroscope_t GyroscopeSensitivity){
+
+MPU6050_Result_t MPU6050_SetGyroscope(MPU6050_t* DataStruct, MPU6050_Gyroscope_t GyroscopeSensitivity) {
 	uint8_t d[2];
 	d[0] = MPU6050_GYRO_CONFIG;
 
@@ -100,7 +102,8 @@ MPU6050_Result_t MPU6050_SetGyroscope(MPU6050_t* DataStruct, MPU6050_Gyroscope_t
 	return MPU6050_Result_Ok;
 
 }
-MPU6050_Result_t MPU6050_SetAccelerometer(MPU6050_t* DataStruct, MPU6050_Accelerometer_t AccelerometerSensitivity){
+
+MPU6050_Result_t MPU6050_SetAccelerometer(MPU6050_t* DataStruct, MPU6050_Accelerometer_t AccelerometerSensitivity) {
 	uint8_t d[2];
 
 	d[0] = MPU6050_ACCEL_CONFIG;
@@ -132,6 +135,7 @@ MPU6050_Result_t MPU6050_SetAccelerometer(MPU6050_t* DataStruct, MPU6050_Acceler
 
 	return MPU6050_Result_Ok;
 }
+
 MPU6050_Result_t MPU6050_SetDataRate(MPU6050_t* DataStruct, uint8_t rate) {
 	uint8_t d[2];
 	d[0] = MPU6050_SMPLRT_DIV;
@@ -140,6 +144,7 @@ MPU6050_Result_t MPU6050_SetDataRate(MPU6050_t* DataStruct, uint8_t rate) {
 
 	return MPU6050_Result_Ok;
 }
+
 MPU6050_Result_t MPU6050_EnableInterrupts(MPU6050_t* DataStruct) {
 	uint8_t d[2];
 
@@ -160,6 +165,7 @@ MPU6050_Result_t MPU6050_EnableInterrupts(MPU6050_t* DataStruct) {
 	return MPU6050_Result_Ok;
 
 }
+
 MPU6050_Result_t MPU6050_DisableInterrupts(MPU6050_t* DataStruct) {
 	uint8_t d[2];
 
@@ -170,6 +176,7 @@ MPU6050_Result_t MPU6050_DisableInterrupts(MPU6050_t* DataStruct) {
 
 	return MPU6050_Result_Ok;
 }
+
 MPU6050_Result_t MPU6050_ReadInterrupts(MPU6050_t* DataStruct, MPU6050_Interrupt_t* InterruptsStruct) {
 	uint8_t read = MPU6050_INT_STATUS;
 
@@ -182,7 +189,8 @@ MPU6050_Result_t MPU6050_ReadInterrupts(MPU6050_t* DataStruct, MPU6050_Interrupt
 
 	return MPU6050_Result_Ok;
 }
-MPU6050_Result_t MPU6050_ReadAccelerometer(MPU6050_t* DataStruct){
+
+MPU6050_Result_t MPU6050_ReadAccelerometer(MPU6050_t* DataStruct) {
 	uint8_t d[6];
 
 	d[0] = MPU6050_ACCEL_XOUT_H;
@@ -208,6 +216,7 @@ MPU6050_Result_t MPU6050_ReadGyroscope(MPU6050_t* DataStruct) {
 
 	return MPU6050_Result_Ok;
 }
+
 MPU6050_Result_t MPU6050_ReadTemperature(MPU6050_t* DataStruct) {
 	uint8_t d[2];
 	int16_t temp;
@@ -221,6 +230,7 @@ MPU6050_Result_t MPU6050_ReadTemperature(MPU6050_t* DataStruct) {
 
 	return MPU6050_Result_Ok;
 }
+
 MPU6050_Result_t MPU6050_ReadAll(MPU6050_t* DataStruct) {
 	uint8_t d[14];
 	int16_t temp = MPU6050_ACCEL_XOUT_H;
@@ -240,5 +250,4 @@ MPU6050_Result_t MPU6050_ReadAll(MPU6050_t* DataStruct) {
 	DataStruct->Gyroscope_Z = (int16_t)(d[12] << 8 | d[13]);
 	return MPU6050_Result_Ok;
 }
-
 

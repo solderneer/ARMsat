@@ -2,7 +2,7 @@
  * hmc.c
  *
  *  Created on: 2 Feb 2017
- *      Author: sidxb
+ *      Author: Siidheesh Theivasigamani
  */
 
 #include "hmc.h"
@@ -42,12 +42,10 @@ void HMC_init(I2C_HandleTypeDef* h) {
 }
 
 void HMC_calculate(void) {
-#ifdef ASSIGN_SYS1
 	hmc_axis_t norm = HMC_readNormalize();
 	normHMC.x = norm.x;
 	normHMC.y = norm.y;
 	normHMC.z = norm.z;
-#endif
 	float heading = atan2f(normHMC.y, normHMC.x);
 	// Set declination angle on your location and fix heading
 	// You can find your declination on: http://magnetic-declination.com/

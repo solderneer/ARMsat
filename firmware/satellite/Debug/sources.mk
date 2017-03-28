@@ -27,9 +27,6 @@ CPP_DEPS :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
-Middlewares/Third_Party/FatFs/src \
-Middlewares/Third_Party/FatFs/src/drivers \
-Middlewares/Third_Party/FatFs/src/option \
 src \
 system/src/cmsis \
 system/src/cortexm \

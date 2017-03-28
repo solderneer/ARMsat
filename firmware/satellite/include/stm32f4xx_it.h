@@ -45,15 +45,12 @@
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 
-void SVC_Handler(void);
-void PendSV_Handler(void);
 void SysTick_Handler(void);
 void ADC_IRQHandler(void);
 void I2C1_EV_IRQHandler(void);
 void I2C1_ER_IRQHandler(void);
 void SPI2_IRQHandler(void);
 void USART2_IRQHandler(void);
-void SDIO_IRQHandler(void);
 void USART6_IRQHandler(void);
 
 #ifdef __cplusplus

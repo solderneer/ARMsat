@@ -2,7 +2,7 @@
  * hmc.h
  *
  *  Created on: 2 Feb 2017
- *      Author: sidxb
+ *      Author: Siidheesh Theivasigamani
  */
 
 #ifndef HMC_H_

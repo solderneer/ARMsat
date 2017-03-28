@@ -2,13 +2,12 @@
  * xbee.c
  *
  *  Created on: 30 Jan 2017
- *      Author: sidxb
+ *      Author: Siidheesh Theivasigamani
  */
 #include "xbee.h"
 #include "stdlib.h"
 
 UART_HandleTypeDef* huart;
-CRC_HandleTypeDef* hcrc;
 
 xbee_rx_buffer_t xbeerx = {{0}, {0}, 0, 0};
 
@@ -22,20 +21,13 @@ uint8_t rx_length = 0;
 uint8_t rx_escape_flag = 0;
 uint8_t rx_checksum = 0;
 
-void Xbee_init(UART_HandleTypeDef* h, CRC_HandleTypeDef* c) {
+void Xbee_init(UART_HandleTypeDef* h) {
 	huart = h;
-	hcrc = c;
-	//Xbee_createTxPacket();
-	//Xbee_prepareTxFrame();
-	//Xbee_sendTxPacket();
 }
 
 void Xbee_prepareTxFrame(void) {
 	p.length.word = 14 + p.payloadSize;
 	if(p.length.word + 4 > XBEE_FRAMEBUF_MAX_SIZE) return;
-
-	//p.payload[p.payloadSize] = HAL_CRC_Calculate(hcrc, p.payload, p.payloadSize) & 0xff;
-	//p.payloadSize++;
 
 	p.frameBufferSize = p.length.word + 4;
 	p.frameBuffer[0] = START_BYTE;
@@ -89,21 +81,10 @@ void Xbee_createTxPacket(uint8_t* payload, size_t payloadSize) {
 	p.destNetworkAddr.word = XBEE_BROADCAST_NETWORK_ADDR;
 	p.broadcastRadius = 0;
 	p.options = 0;
-	p.payload = payload;//"Hello World!";
-	p.payloadSize = payloadSize;//6;
+	p.payload = payload;
+	p.payloadSize = payloadSize;
 	p.frameBuffer = xbee_framebuf;
 	p.frameBufferSize = 0;
-}
-
-void Xbee_sendSensorData(uint32_t pressure, uint32_t temp, uint32_t alt, uint32_t heading) {
-	uint8_t buffer[XBEE_PAYLOAD_MAX_SIZE] = {0};
-	sprintf((const char *)&buffer, "Pressure: %u Pa\r\nTemp: %1d.%02u°C\r\nAltitude: %um\r\nHeading: %u deg\r\n", pressure, temp/100, temp%100, alt, heading);
-	int size = 0;
-	while(buffer[size] != 0) size++;
-	if(size + 1 > XBEE_PAYLOAD_MAX_SIZE) return;
-	Xbee_createTxPacket((uint8_t*)&buffer, size);
-	Xbee_prepareTxFrame();
-	Xbee_sendTxPacket();
 }
 
 void Xbee_sendPayload(uint8_t* payload, size_t payloadSize) {
