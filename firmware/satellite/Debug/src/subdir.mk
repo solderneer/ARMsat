@@ -13,6 +13,7 @@ C_SRCS += \
 ../src/i2c.c \
 ../src/lcd.c \
 ../src/main.c \
+../src/mpu6050.c \
 ../src/payload.c \
 ../src/pressure.c \
 ../src/sdio.c \
@@ -35,6 +36,7 @@ OBJS += \
 ./src/i2c.o \
 ./src/lcd.o \
 ./src/main.o \
+./src/mpu6050.o \
 ./src/payload.o \
 ./src/pressure.o \
 ./src/sdio.o \
@@ -57,6 +59,7 @@ C_DEPS += \
 ./src/i2c.d \
 ./src/lcd.d \
 ./src/main.d \
+./src/mpu6050.d \
 ./src/payload.d \
 ./src/pressure.d \
 ./src/sdio.d \

@@ -89,6 +89,7 @@ void LCD_refreshFrame(void) {
 	LCD_home();
 	switch(lcdFrame) {
 	case 0:
+#ifdef ASSIGN_SYS1
 		LCD_setCursor(0,0);
 		LCD_print("Humidity:");
 		LCD_setCursor(1,0);
@@ -97,11 +98,23 @@ void LCD_refreshFrame(void) {
 		LCD_print("Pressure:");
 		LCD_setCursor(3,0);
 		LCD_print("Altitude:");
+#else
+		LCD_setCursor(0,0);
+		LCD_print("Mag X:");
+		LCD_setCursor(1,0);
+		LCD_print("Mag Y:");
+		LCD_setCursor(2,0);
+		LCD_print("Mag Z:");
+		LCD_setCursor(3,0);
+		LCD_print("Heading:");
+#endif
 		break;
+#if 0
 	case 1:
 		LCD_setCursor(0,0);
 		LCD_print("Heading:");
 		break;
+#endif
 	default:
 		LCD_setCursor(0,0);
 		LCD_print("Hello World!");
@@ -110,7 +123,7 @@ void LCD_refreshFrame(void) {
 		break;
 	}
 }
-
+/*
 void LCD_updateSensors(uint32_t humid, uint32_t temp, uint32_t pressure, uint32_t alt, uint32_t heading) {
 	uint8_t buf[10] = {0};
 	switch(lcdFrame) {
@@ -146,7 +159,71 @@ void LCD_updateSensors(uint32_t humid, uint32_t temp, uint32_t pressure, uint32_
 			LCD_setCursor(0,19);
 			break;
 	}
+}*/
+
+#ifdef ASSIGN_SYS1
+void LCD_updateSensors(uint32_t humid, uint32_t temp, uint32_t pressure, uint32_t alt) {
+	uint8_t buf[10] = {0};
+	LCD_setCursor(0,10);
+	sprintf(&buf, "%u.%02u%%  ", humid/100, humid%100);
+	LCD_print(&buf);
+	LCD_setCursor(0,19);
+	LCD_command(humid<5000?128:129);
+
+	LCD_setCursor(1,10);
+	sprintf(&buf, "%d.%02uC  ", temp/100, temp%100);
+	LCD_print(&buf);
+	LCD_setCursor(1,19);
+	LCD_command(temp<2500?128:129);
+
+	LCD_setCursor(2,10);
+	sprintf(&buf, "%uPa  ", pressure);
+	LCD_print(&buf);
+	LCD_setCursor(2,19);
+	LCD_command(131);
+
+	LCD_setCursor(3,10);
+	sprintf(&buf, "%um  ", alt);
+	LCD_print(&buf);
+	LCD_setCursor(3,19);
+	LCD_command(130);
 }
+#else
+void LCD_updateSensors(hmc_axis_t h, uint32_t alt) {
+	uint8_t buf[10] = {0};
+	int x = (int)(h.x*100);
+	int y = (int)(h.y*100);
+	int z = (int)(h.z*100);
+
+	int x_abs = x>0 ? x : -x;
+	int y_abs = y>0 ? y : -y;
+	int z_abs = z>0 ? z : -z;
+
+	LCD_setCursor(0,10);
+	sprintf(&buf, "%d.%02u", x/100,x_abs%100);
+	LCD_print(&buf);
+	LCD_setCursor(0,19);
+	//LCD_command(humid<5000?128:129);
+
+	LCD_setCursor(1,10);
+	sprintf(&buf, "%d.%02u", y/100,y_abs%100);
+	LCD_print(&buf);
+	LCD_setCursor(1,19);
+	//LCD_command(temp<2500?128:129);
+
+	LCD_setCursor(2,10);
+	sprintf(&buf, "%d.%02u", z/100,z_abs%100);
+	LCD_print(&buf);
+	LCD_setCursor(2,19);
+	//LCD_command(131);
+
+	LCD_setCursor(3,10);
+	sprintf(&buf, "%u deg  ", alt);
+	LCD_print(&buf);
+	LCD_setCursor(3,19);
+	//LCD_command(130);
+}
+#endif
 
 void LCD_loadCustomChar(uint8_t id, uint8_t* bitmap) {
 	data[0] = 0;

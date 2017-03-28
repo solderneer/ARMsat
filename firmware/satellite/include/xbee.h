@@ -25,8 +25,13 @@
 #define xbee_available ((XBEE_RX_BUFFER_SIZE+xbeerx.head-xbeerx.tail) & XBEE_RX_BUF_SIZEOP)
 #define xbee_empty (xbeerx.head == xbeerx.tail)
 
-#define XBEE_BROADCAST_ADDR 0x000000000000FFFF;
-#define XBEE_BROADCAST_NETWORK_ADDR 0xFFFE;
+#ifdef ASSIGN_SYS1
+#define XBEE_COORD_ADDR				0x0013a20040b9d07e
+#else
+#define XBEE_COORD_ADDR				0x0013a20040a9dc0a
+#endif
+#define XBEE_BROADCAST_ADDR 		0x000000000000FFFF
+#define XBEE_BROADCAST_NETWORK_ADDR 0xFFFE
 
 typedef struct {
     uint8_t* buffer[XBEE_RX_BUFFER_SIZE];

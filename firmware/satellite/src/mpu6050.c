@@ -49,9 +49,12 @@ I2C_HandleTypeDef *hi2c_p;
 #define MPU6050_ACCE_SENS_8			((float) 4096)
 #define MPU6050_ACCE_SENS_16		((float) 2048)
 
+
+I2C_HandleTypeDef* hi2c;
+
 MPU6050_Result_t MPU6050_Init(MPU6050_t* DataStruct, MPU6050_Device_t DeviceNumber, MPU6050_Accelerometer_t AccelerometerSensitivity, MPU6050_Gyroscope_t GyroscopeSensitivity, I2C_HandleTypeDef* h){
 	uint8_t temp;
-	hi2c_p = h;
+	hi2c = h;
 	uint8_t d[2];
 
 	DataStruct->Address = MPU6050_I2C_ADDR | (uint8_t)DeviceNumber;
@@ -59,25 +62,23 @@ MPU6050_Result_t MPU6050_Init(MPU6050_t* DataStruct, MPU6050_Device_t DeviceNumb
 	d[0] = MPU6050_PWR_MGMT_1;
 	d[1] = 0x00;
 
-	HAL_I2C_Master_Transmit(h, (uint16_t)DataStruct->Address, (uint8_t *)d, 2, 1000);
+	HAL_I2C_Master_Transmit(hi2c, (uint16_t)DataStruct->Address, (uint8_t *)d, 2, 1000);
 
-
+	MPU6050_SetGyroscope(DataStruct, GyroscopeSensitivity);
+	MPU6050_SetAccelerometer(DataStruct, AccelerometerSensitivity);
 	//assuming I2C is already initialized
 }
-MPU6050_Result_t MPU6050_SetGyroscope(MPU6050_t* DataStruct, MPU6050_Gyroscope_t GyroscopeSensitivity, I2C_HandleTypeDef* h){
-	uint8_t temp;
-	hi2c_p = h;
+MPU6050_Result_t MPU6050_SetGyroscope(MPU6050_t* DataStruct, MPU6050_Gyroscope_t GyroscopeSensitivity){
 	uint8_t d[2];
-
-	HAL_I2C_Master_Transmit(h, (uint16_t)DataStruct->Address, &MPU6050_GYRO_CONFIG, 1, 1000);
-	HAL_I2C_Master_Receive(h, (uint16_t)DataStruct->Address, &temp, 1, 1000);
-
-	temp = (temp & 0xE7) | (uint8_t)GyroscopeSensitivity << 3;
-
 	d[0] = MPU6050_GYRO_CONFIG;
-	d[1] = temp;
 
-	HAL_I2C_Master_Transmit(h, (uint16_t)DataStruct->Address, (uint8_t *)d, 2, 1000);
+	HAL_I2C_Master_Transmit(hi2c, (uint16_t)DataStruct->Address, (uint8_t*)d, 1, 1000);
+	HAL_I2C_Master_Receive(hi2c, (uint16_t)DataStruct->Address, (uint8_t*)d, 1, 1000);
+
+	d[1] = (d[0] & 0xE7) | (uint8_t)GyroscopeSensitivity << 3;
+	d[0] = MPU6050_GYRO_CONFIG;
+
+	HAL_I2C_Master_Transmit(hi2c, (uint16_t)DataStruct->Address, (uint8_t *)d, 2, 1000);
 
 	switch (GyroscopeSensitivity) {
 		case MPU6050_Gyroscope_250s:
@@ -99,19 +100,18 @@ MPU6050_Result_t MPU6050_SetGyroscope(MPU6050_t* DataStruct, MPU6050_Gyroscope_t
 	return MPU6050_Result_Ok;
 
 }
-MPU6050_Result_t MPU6050_SetAccelerometer(MPU6050_t* DataStruct, MPU6050_Accelerometer_t AccelerometerSensitivity, I2C_HandleTypeDef* h){
-	uint8_t temp;
-	hi2c_p = h;
+MPU6050_Result_t MPU6050_SetAccelerometer(MPU6050_t* DataStruct, MPU6050_Accelerometer_t AccelerometerSensitivity){
 	uint8_t d[2];
 
-	HAL_I2C_Master_Transmit(h, (uint16_t)DataStruct->Address, &MPU6050_ACCEL_CONFIG, 1, 1000);
-	HAL_I2C_Master_Receive(h, (uint16_t)DataStruct->Address, &temp, 1, 1000);
-	temp = (temp & 0xE7) | (uint8_t)AccelerometerSensitivity << 3;
-
 	d[0] = MPU6050_ACCEL_CONFIG;
-	d[1] = temp;
 
-	HAL_I2C_Master_Transmit(h, (uint16_t)DataStruct->Address, (uint8_t *)d, 2, 1000);
+	HAL_I2C_Master_Transmit(hi2c, (uint16_t)DataStruct->Address, (uint8_t*)d, 1, 1000);
+	HAL_I2C_Master_Receive(hi2c, (uint16_t)DataStruct->Address, (uint8_t*)d, 1, 1000);
+
+	d[1] = (d[0] & 0xE7) | (uint8_t)AccelerometerSensitivity << 3;
+	d[0] = MPU6050_ACCEL_CONFIG;
+
+	HAL_I2C_Master_Transmit(hi2c, (uint16_t)DataStruct->Address, (uint8_t *)d, 2, 1000);
 
 	switch (AccelerometerSensitivity) {
 		case MPU6050_Accelerometer_2G:
@@ -132,121 +132,112 @@ MPU6050_Result_t MPU6050_SetAccelerometer(MPU6050_t* DataStruct, MPU6050_Acceler
 
 	return MPU6050_Result_Ok;
 }
-MPU6050_Result_t MPU6050_SetDataRate(MPU6050_t* DataStruct, uint8_t rate, I2C_HandleTypeDef* h){
-	hi2c_p = h;
+MPU6050_Result_t MPU6050_SetDataRate(MPU6050_t* DataStruct, uint8_t rate) {
 	uint8_t d[2];
-
 	d[0] = MPU6050_SMPLRT_DIV;
 	d[1] = rate;
-	HAL_I2C_Master_Transmit(h, DataStruct->Address, (uint8_t *)d, 2, 1000);
+	HAL_I2C_Master_Transmit(hi2c, DataStruct->Address, (uint8_t *)d, 2, 1000);
 
 	return MPU6050_Result_Ok;
 }
-MPU6050_Result_t MPU6050_EnableInterrupts(MPU6050_t* DataStruct, I2C_HandleTypeDef* h){
-	uint8_t temp;
-	hi2c_p = h;
+MPU6050_Result_t MPU6050_EnableInterrupts(MPU6050_t* DataStruct) {
 	uint8_t d[2];
 
 	d[0] = MPU6050_INT_ENABLE;
 	d[1] = 0x21;
 
-	HAL_I2C_Master_Transmit(h, DataStruct->Address, (uint8_t *)d, 2, 1000);
-
-	HAL_I2C_Master_Transmit(h, (uint16_t)DataStruct->Address, &MPU6050_INT_PIN_CFG, 1, 1000);
-	HAL_I2C_Master_Receive(h, (uint16_t)DataStruct->Address, &temp, 1, 1000);
-
-	temp |= 0x10;
+	HAL_I2C_Master_Transmit(hi2c_p, DataStruct->Address, (uint8_t *)d, 2, 1000);
 
 	d[0] = MPU6050_INT_PIN_CFG;
-	d[1] = temp;
+	HAL_I2C_Master_Transmit(hi2c, (uint16_t)DataStruct->Address, (uint8_t*)d, 1, 1000);
+	HAL_I2C_Master_Receive(hi2c, (uint16_t)DataStruct->Address, (uint8_t*)d, 1, 1000);
 
-	HAL_I2C_Master_Transmit(h, DataStruct->Address, (uint8_t *)d, 2, 1000);
+	d[1] = d[0] | 0x10;
+	d[0] = MPU6050_INT_PIN_CFG;
+
+	HAL_I2C_Master_Transmit(hi2c, DataStruct->Address, (uint8_t *)d, 2, 1000);
 
 	return MPU6050_Result_Ok;
 
 }
-MPU6050_Result_t MPU6050_DisableInterrupts(MPU6050_t* DataStruct, I2C_HandleTypeDef* h){
-	hi2c_p = h;
+MPU6050_Result_t MPU6050_DisableInterrupts(MPU6050_t* DataStruct) {
 	uint8_t d[2];
 
 	d[0] = MPU6050_INT_ENABLE;
 	d[1] = 0x00;
 
-	HAL_I2C_Master_Transmit(h, DataStruct->Address, (uint8_t *)d, 2, 1000);
+	HAL_I2C_Master_Transmit(hi2c, DataStruct->Address, (uint8_t *)d, 2, 1000);
 
 	return MPU6050_Result_Ok;
 }
-MPU6050_Result_t MPU6050_ReadInterrupts(MPU6050_t* DataStruct, MPU6050_Interrupt_t* InterruptsStruct, I2C_HandleTypeDef* h){
-	uint8_t read;
-	hi2c_p = h;
+MPU6050_Result_t MPU6050_ReadInterrupts(MPU6050_t* DataStruct, MPU6050_Interrupt_t* InterruptsStruct) {
+	uint8_t read = MPU6050_INT_STATUS;
 
 	InterruptsStruct->Status = 0;
 
-	HAL_I2C_Master_Transmit(h, (uint16_t)DataStruct->Address, &MPU6050_INT_STATUS, 1, 1000);
-	HAL_I2C_Master_Receive(h, (uint16_t)DataStruct->Address, &read, 1, 1000);
+	HAL_I2C_Master_Transmit(hi2c, (uint16_t)DataStruct->Address, (uint8_t*)&read, 1, 1000);
+	HAL_I2C_Master_Receive(hi2c, (uint16_t)DataStruct->Address, (uint8_t*)&read, 1, 1000);
 
 	InterruptsStruct->Status = read;
 
 	return MPU6050_Result_Ok;
 }
-MPU6050_Result_t MPU6050_ReadAccelerometer(MPU6050_t* DataStruct, I2C_HandleTypeDef* h){
-	uint8_t data[6];
-	hi2c_p = h;
+MPU6050_Result_t MPU6050_ReadAccelerometer(MPU6050_t* DataStruct){
+	uint8_t d[6];
 
-	HAL_I2C_Master_Transmit(h, (uint16_t)DataStruct->Address, &MPU6050_ACCEL_XOUT_H, 1, 1000);
-	HAL_I2C_Master_Receive(h, (uint16_t)DataStruct->Address, data, 6, 1000);
+	d[0] = MPU6050_ACCEL_XOUT_H;
+	HAL_I2C_Master_Transmit(hi2c, (uint16_t)DataStruct->Address, (uint8_t *)d, 1, 1000);
+	HAL_I2C_Master_Receive(hi2c, (uint16_t)DataStruct->Address, (uint8_t *)d, 6, 1000);
 
-	DataStruct->Accelerometer_X = (int16_t)(data[0] << 8 | data[1]);
-	DataStruct->Accelerometer_Y = (int16_t)(data[2] << 8 | data[3]);
-	DataStruct->Accelerometer_Z = (int16_t)(data[4] << 8 | data[5]);
-
-	return MPU6050_Result_Ok;
-}
-
-MPU6050_Result_t MPU6050_ReadGyroscope(MPU6050_t* DataStruct, I2C_HandleTypeDef* h){
-	uint8_t data[6];
-	hi2c_p = h;
-
-	HAL_I2C_Master_Transmit(h, (uint16_t)DataStruct->Address, &MPU6050_GYRO_XOUT_H, 1, 1000);
-	HAL_I2C_Master_Receive(h, (uint16_t)DataStruct->Address, data, 6, 1000);
-
-	DataStruct->Gyroscope_X = (int16_t)(data[0] << 8 | data[1]);
-	DataStruct->Gyroscope_Y = (int16_t)(data[2] << 8 | data[3]);
-	DataStruct->Gyroscope_Z = (int16_t)(data[4] << 8 | data[5]);
+	DataStruct->Accelerometer_X = (int16_t)(d[0] << 8 | d[1]);
+	DataStruct->Accelerometer_Y = (int16_t)(d[2] << 8 | d[3]);
+	DataStruct->Accelerometer_Z = (int16_t)(d[4] << 8 | d[5]);
 
 	return MPU6050_Result_Ok;
 }
-MPU6050_Result_t MPU6050_ReadTemperature(MPU6050_t* DataStruct, I2C_HandleTypeDef* h){
-	uint8_t data[2];
+
+MPU6050_Result_t MPU6050_ReadGyroscope(MPU6050_t* DataStruct) {
+	uint8_t d[6];
+	d[0] = MPU6050_GYRO_XOUT_H;
+	HAL_I2C_Master_Transmit(hi2c, (uint16_t)DataStruct->Address, (uint8_t*)d, 1, 1000);
+	HAL_I2C_Master_Receive(hi2c, (uint16_t)DataStruct->Address, (uint8_t*)d, 6, 1000);
+
+	DataStruct->Gyroscope_X = (int16_t)(d[0] << 8 | d[1]);
+	DataStruct->Gyroscope_Y = (int16_t)(d[2] << 8 | d[3]);
+	DataStruct->Gyroscope_Z = (int16_t)(d[4] << 8 | d[5]);
+
+	return MPU6050_Result_Ok;
+}
+MPU6050_Result_t MPU6050_ReadTemperature(MPU6050_t* DataStruct) {
+	uint8_t d[2];
 	int16_t temp;
-	hi2c_p = h;
 
-	HAL_I2C_Master_Transmit(h, (uint16_t)DataStruct->Address, &MPU6050_TEMP_OUT_H, 1, 1000);
-	HAL_I2C_Master_Receive(h, (uint16_t)DataStruct->Address, data, 2, 1000);
+	HAL_I2C_Master_Transmit(hi2c, (uint16_t)DataStruct->Address, (uint8_t*)d, 1, 1000);
+	HAL_I2C_Master_Receive(hi2c, (uint16_t)DataStruct->Address, (uint8_t*)d, 2, 1000);
 
-	temp = (data[0] << 8 | data[1]);
+	temp = (d[0] << 8 | d[1]);
 
 	DataStruct->Temperature = (float)((int16_t)temp / (float)340.0 + (float)36.53);
 
 	return MPU6050_Result_Ok;
 }
-MPU6050_Result_t MPU6050_ReadAll(MPU6050_t* DataStruct, I2C_HandleTypeDef* h){
-	uint8_t data[14];
-	int16_t temp;
+MPU6050_Result_t MPU6050_ReadAll(MPU6050_t* DataStruct) {
+	uint8_t d[14];
+	int16_t temp = MPU6050_ACCEL_XOUT_H;
 
-	HAL_I2C_Master_Transmit(h, (uint16_t)DataStruct->Address, &MPU6050_ACCEL_XOUT_H, 1, 1000);
-	HAL_I2C_Master_Receive(h, (uint16_t)DataStruct->Address, data, 14, 1000);
+	HAL_I2C_Master_Transmit(hi2c, (uint16_t)DataStruct->Address, (uint8_t*)&temp, 1, 1000);
+	HAL_I2C_Master_Receive(hi2c, (uint16_t)DataStruct->Address, (uint8_t*)d, 14, 1000);
 
-	DataStruct->Accelerometer_X = (int16_t)(data[0] << 8 | data[1]);
-	DataStruct->Accelerometer_Y = (int16_t)(data[2] << 8 | data[3]);
-	DataStruct->Accelerometer_Z = (int16_t)(data[4] << 8 | data[5]);
+	DataStruct->Accelerometer_X = (int16_t)(d[0] << 8 | d[1]);
+	DataStruct->Accelerometer_Y = (int16_t)(d[2] << 8 | d[3]);
+	DataStruct->Accelerometer_Z = (int16_t)(d[4] << 8 | d[5]);
 
-	temp = (data[6] << 8 | data[7]);
+	temp = (d[6] << 8 | d[7]);
 	DataStruct->Temperature = (float)((float)((int16_t)temp) / (float)340.0 + (float)36.53);
 
-	DataStruct->Gyroscope_X = (int16_t)(data[8] << 8 | data[9]);
-	DataStruct->Gyroscope_Y = (int16_t)(data[10] << 8 | data[11]);
-	DataStruct->Gyroscope_Z = (int16_t)(data[12] << 8 | data[13]);
+	DataStruct->Gyroscope_X = (int16_t)(d[8] << 8 | d[9]);
+	DataStruct->Gyroscope_Y = (int16_t)(d[10] << 8 | d[11]);
+	DataStruct->Gyroscope_Z = (int16_t)(d[12] << 8 | d[13]);
 	return MPU6050_Result_Ok;
 }
 

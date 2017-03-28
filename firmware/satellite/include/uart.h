@@ -7,6 +7,9 @@
 
 #include "stm32f4xx_hal.h"
 
+#define PC_UART huart2
+#define XBEE_UART huart6
+
 #define SERIAL_BUFFER_SIZE 1024
 #define SERIAL_BUF_SIZEOP (SERIAL_BUFFER_SIZE - 1)//1023
 

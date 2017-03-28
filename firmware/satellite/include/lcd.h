@@ -10,6 +10,7 @@
 
 #include "stm32f4xx_hal.h"
 #include "main.h"
+#include "hmc.h"
 
 #define LCD_I2C_ADDRESS (0xC6)
 
@@ -31,7 +32,13 @@ extern void LCD_printNum(int num, int digits, int radix);
 void LCD_loadCustomChar(uint8_t id, uint8_t* bitmap);
 void LCD_setCursor(uint8_t line, uint8_t col);
 uint8_t LCD_keypad(void);
-void LCD_updateSensors(uint32_t humid, uint32_t temp, uint32_t pressure, uint32_t alt, uint32_t heading);
+
+#ifdef ASSIGN_SYS1
+void LCD_updateSensors(uint32_t humid, uint32_t temp, uint32_t pressure, uint32_t alt);
+#else
+void LCD_updateSensors(hmc_axis_t h, uint32_t alt);
+#endif
+
 void LCD_refreshFrame(void);
 
 #endif /* LCD_H_ */

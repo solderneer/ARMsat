@@ -77,14 +77,14 @@ typedef union MPU6050_Interrupt_t {
 	uint8_t Status;
 } MPU6050_Interrupt_t;
 
-MPU6050_Result_t MPU6050_Init(MPU6050_t* DataStruct, MPU6050_Device_t DeviceNumber, MPU6050_Accelerometer_t AccelerometerSensitivity, MPU6050_Gyroscope_t GyroscopeSensitivity);
+MPU6050_Result_t MPU6050_Init(MPU6050_t* DataStruct, MPU6050_Device_t DeviceNumber, MPU6050_Accelerometer_t AccelerometerSensitivity, MPU6050_Gyroscope_t GyroscopeSensitivity, I2C_HandleTypeDef* h);
 MPU6050_Result_t MPU6050_SetGyroscope(MPU6050_t* DataStruct, MPU6050_Gyroscope_t GyroscopeSensitivity);
 MPU6050_Result_t MPU6050_SetAccelerometer(MPU6050_t* DataStruct, MPU6050_Accelerometer_t AccelerometerSensitivity);
 MPU6050_Result_t MPU6050_SetDataRate(MPU6050_t* DataStruct, uint8_t rate);
 MPU6050_Result_t MPU6050_EnableInterrupts(MPU6050_t* DataStruct);
 MPU6050_Result_t MPU6050_DisableInterrupts(MPU6050_t* DataStruct);
 MPU6050_Result_t MPU6050_ReadInterrupts(MPU6050_t* DataStruct, MPU6050_Interrupt_t* InterruptsStruct);
-MPU6050_Result_t MPU6050_ReadAccelerometer(MPU6050_t* DataStruct, I2C_HandleTypeDef* h)
+MPU6050_Result_t MPU6050_ReadAccelerometer(MPU6050_t* DataStruct);
 MPU6050_Result_t MPU6050_ReadGyroscope(MPU6050_t* DataStruct);
 MPU6050_Result_t MPU6050_ReadTemperature(MPU6050_t* DataStruct);
 MPU6050_Result_t MPU6050_ReadAll(MPU6050_t* DataStruct);

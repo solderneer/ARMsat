@@ -51,8 +51,11 @@
 
 /* Private define ------------------------------------------------------------*/
 
-//#define XBEE_TX_END
+#define XBEE_TX_END
 #define XBEE_RX_END
+
+//#define ASSIGN_SYS1 //base
+#define ASSIGN_SYS2 //balloon
 
 #define B1_Pin GPIO_PIN_13
 #define B1_GPIO_Port GPIOC

@@ -15,32 +15,26 @@ volatile uint16_t tx_timeout = 0;
 
 HAL_StatusTypeDef SID_UART_Receive_IT_Setup(UART_HandleTypeDef *huart)
 {
-  /* Check that a Rx process is not already ongoing */
-  if(huart->RxState == HAL_UART_STATE_READY)
-  {
-	rx_head = 0;
-	tx_head = 0;
-	rx_timeout = 20;
-	tx_timeout = 20;
-	/* Process Locked */
-    __HAL_LOCK(huart);
-    huart->ErrorCode = HAL_UART_ERROR_NONE;
-    huart->RxState = HAL_UART_STATE_BUSY_RX;
-    /* Process Unlocked */
-    __HAL_UNLOCK(huart);
-    /* Enable the UART Error Interrupt: (Frame error, noise error, overrun error) */
-    SET_BIT(huart->Instance->CR3, USART_CR3_EIE);
-    /* Enable the UART Parity Error and Data Register not empty Interrupts */
-    SET_BIT(huart->Instance->CR1, USART_CR1_PEIE | USART_CR1_RXNEIE);
-    return HAL_OK;
-  }
-  else
-  {
-    return HAL_BUSY;
-  }
+	SET_BIT(huart->Instance->CR1, USART_CR1_RXNEIE);
 }
 
- void SID_UART_IRQHandler(UART_HandleTypeDef *huart) {
+void SID_UART_IRQHandler(UART_HandleTypeDef *huart) {
+	uint32_t isrflags   = READ_REG(huart->Instance->SR);
+	uint32_t cr1its     = READ_REG(huart->Instance->CR1);
+	if(((isrflags & USART_SR_RXNE) != RESET) && ((cr1its & USART_CR1_RXNEIE) != RESET)) {
+		if(huart->Instance == USART6) {
+			int i = (unsigned int) (rx.head + 1) & SERIAL_BUF_SIZEOP;
+			if (i != rx.tail) {
+				rx.buffer[rx.head] = (char)(huart->Instance->DR & 0x00FFU);
+				rx.head = i;
+			}
+			return;
+		}
+	}
+}
+
+void SID_UART_IRQHandler_old(UART_HandleTypeDef *huart) {
+
 	 uint32_t isrflags   = READ_REG(huart->Instance->SR);
 	 uint32_t cr1its     = READ_REG(huart->Instance->CR1);
 	 uint32_t cr3its     = READ_REG(huart->Instance->CR3);

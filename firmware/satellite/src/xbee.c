@@ -5,6 +5,7 @@
  *      Author: sidxb
  */
 #include "xbee.h"
+#include "stdlib.h"
 
 UART_HandleTypeDef* huart;
 CRC_HandleTypeDef* hcrc;
@@ -83,8 +84,8 @@ void Xbee_sendTxPacket(void) {
 
 void Xbee_createTxPacket(uint8_t* payload, size_t payloadSize) {
 	p.frameType = 0x10;
-	p.frameId = 1;
-	p.destAddr.word = XBEE_BROADCAST_ADDR;
+	p.frameId = 0;
+	p.destAddr.word = XBEE_COORD_ADDR;
 	p.destNetworkAddr.word = XBEE_BROADCAST_NETWORK_ADDR;
 	p.broadcastRadius = 0;
 	p.options = 0;

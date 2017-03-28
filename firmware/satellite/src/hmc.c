@@ -42,7 +42,7 @@ void HMC_init(I2C_HandleTypeDef* h) {
 }
 
 void HMC_calculate(void) {
-#ifdef XBEE_TX_END
+#ifdef ASSIGN_SYS1
 	hmc_axis_t norm = HMC_readNormalize();
 	normHMC.x = norm.x;
 	normHMC.y = norm.y;
