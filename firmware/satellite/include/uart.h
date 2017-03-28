@@ -35,9 +35,7 @@ HAL_StatusTypeDef SID_UART_Transmit(UART_HandleTypeDef *huart, uint8_t *pData, u
 HAL_StatusTypeDef SID_UART_TransmitChar(UART_HandleTypeDef *huart, uint8_t *pData);
 
 uint16_t rx_peek(void);
-uint16_t tx_peek(void);
 uint16_t rx_read(uint8_t *buf);
-uint16_t tx_read(uint8_t *buf);
 
 #ifdef __cplusplus
 }

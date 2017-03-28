@@ -60,7 +60,7 @@ void Pressure_getUnCompTemp(void) {
 	//while(HAL_I2C_IsDeviceReady(hi2c_p, BMP085_I2C_ADDRESS, 2, 15) == HAL_TIMEOUT);
 	bmp_data[0] = 0xf4;
 	bmp_data[1] = 0x2e;
-	HAL_I2C_Master_Transmit(hi2c_p, BMP085_I2C_ADDRESS, (uint8_t*)&bmp_data, 2, 0xffff);
+	HAL_I2C_Master_Transmit(hi2c_p, BMP085_I2C_ADDRESS, (uint8_t*)&bmp_data, 2, 1000);
 	// DELAY 5MS
 	pressureDelayTicks = 5;
 	pressureDelayState = 1;
@@ -77,7 +77,7 @@ void Pressure_getUnCompPressure(void) {
 	//while(HAL_I2C_IsDeviceReady(hi2c_p, BMP085_I2C_ADDRESS, 2, 15) == HAL_TIMEOUT);
 	bmp_data[0] = 0xf4;
 	bmp_data[1] = 0x34 + (OSS<<6);
-	HAL_I2C_Master_Transmit(hi2c_p, BMP085_I2C_ADDRESS, (uint8_t*)&bmp_data, 2, 0xffff);
+	HAL_I2C_Master_Transmit(hi2c_p, BMP085_I2C_ADDRESS, (uint8_t*)&bmp_data, 2, 1000);
 	// DELAY
 	pressureDelayTicks = 2 + (3<<OSS);
 }
@@ -146,8 +146,8 @@ void Pressure_get(void) { //get the ball rolling
 void Pressure_reqData(uint8_t addr, uint8_t* dsc, uint32_t size) {
 	//while(HAL_I2C_IsDeviceReady(hi2c_p, BMP085_I2C_ADDRESS, 2, 15) == HAL_TIMEOUT);
 	bmp_data[0] = addr;
-	HAL_I2C_Master_Transmit(hi2c_p, BMP085_I2C_ADDRESS, (uint8_t*)&bmp_data, 1, 0xffff);
-	HAL_I2C_Master_Receive(hi2c_p, BMP085_I2C_ADDRESS, (uint8_t*)&bmp_data, size, 0xffff);
+	HAL_I2C_Master_Transmit(hi2c_p, BMP085_I2C_ADDRESS, (uint8_t*)&bmp_data, 1, 1000);
+	HAL_I2C_Master_Receive(hi2c_p, BMP085_I2C_ADDRESS, (uint8_t*)&bmp_data, size, 1000);
 	while(size) {
 		*dsc++ = bmp_data[size-1];
 		size--;

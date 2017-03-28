@@ -51,6 +51,8 @@ extern SPI_HandleTypeDef hspi2;
 /* USER CODE BEGIN Private defines */
 #define FIO_CS_Pin GPIO_PIN_2
 #define FIO_CS_Port GPIOB
+
+#define FIO_SPI hspi2
 /* USER CODE END Private defines */
 
 extern void Error_Handler(void);

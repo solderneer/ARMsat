@@ -238,15 +238,15 @@ inline void HMC_writeRegister8(uint8_t reg, uint8_t value)
 {
 	hmc_buf[0] = reg;
 	hmc_buf[1] = value;
-	HAL_I2C_Master_Transmit(hi2c, HMC5883L_ADDRESS, (uint8_t*)&hmc_buf, 2, 0xffff);
+	HAL_I2C_Master_Transmit(hi2c, HMC5883L_ADDRESS, (uint8_t*)&hmc_buf, 2, 1000);
 }
 
 // Read byte to register
 inline uint8_t HMC_fastRegister8(uint8_t reg)
 {
 	hmc_buf[0] = reg;
-	HAL_I2C_Master_Transmit(hi2c, HMC5883L_ADDRESS, (uint8_t*)&hmc_buf, 1, 0xffff);
-	HAL_I2C_Master_Receive(hi2c, HMC5883L_ADDRESS, (uint8_t*)&hmc_buf, 1, 0xffff);
+	HAL_I2C_Master_Transmit(hi2c, HMC5883L_ADDRESS, (uint8_t*)&hmc_buf, 1, 1000);
+	HAL_I2C_Master_Receive(hi2c, HMC5883L_ADDRESS, (uint8_t*)&hmc_buf, 1, 1000);
     return hmc_buf[0];
 }
 
@@ -254,8 +254,8 @@ inline uint8_t HMC_fastRegister8(uint8_t reg)
 inline uint8_t HMC_readRegister8(uint8_t reg)
 {
 	hmc_buf[0] = reg;
-	HAL_I2C_Master_Transmit(hi2c, HMC5883L_ADDRESS, (uint8_t*)&hmc_buf, 1, 0xffff);
-	HAL_I2C_Master_Receive(hi2c, HMC5883L_ADDRESS, (uint8_t*)&hmc_buf, 1, 0xffff);
+	HAL_I2C_Master_Transmit(hi2c, HMC5883L_ADDRESS, (uint8_t*)&hmc_buf, 1, 1000);
+	HAL_I2C_Master_Receive(hi2c, HMC5883L_ADDRESS, (uint8_t*)&hmc_buf, 1, 1000);
 	return hmc_buf[0];
 }
 
@@ -263,7 +263,7 @@ inline uint8_t HMC_readRegister8(uint8_t reg)
 inline int16_t HMC_readRegister16(uint8_t reg)
 {
 	hmc_buf[0] = reg;
-	HAL_I2C_Master_Transmit(hi2c, HMC5883L_ADDRESS, (uint8_t*)&hmc_buf, 1, 0xffff);
-	HAL_I2C_Master_Receive(hi2c, HMC5883L_ADDRESS, (uint8_t*)&hmc_buf, 2, 0xffff);
+	HAL_I2C_Master_Transmit(hi2c, HMC5883L_ADDRESS, (uint8_t*)&hmc_buf, 1, 1000);
+	HAL_I2C_Master_Receive(hi2c, HMC5883L_ADDRESS, (uint8_t*)&hmc_buf, 2, 1000);
     return hmc_buf[0] << 8 | hmc_buf[1];
 }

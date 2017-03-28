@@ -37,12 +37,16 @@ uint32_t xbeeTick = 0;
 uint32_t sensorTick = 0;
 uint32_t dataLogTick = 0;
 
-uint16_t genericCmd = 0;
-uint16_t newGenericCmd = 0;
-uint16_t panPos = 0;
-uint16_t newPanPos = 0;
-uint16_t tiltPos = 0;
-uint16_t newTiltPos = 0;
+uint8_t cmdbuf = 0;
+
+uint32_t genericCmd = 0;
+uint32_t newGenericCmd = 0;
+uint32_t panPos = 0;
+uint32_t newPanPos = 0;
+uint32_t tiltPos = 0;
+uint32_t newTiltPos = 0;
+
+uint32_t vref = 1489; //1.2v nominal, temp-dependent
 
 MPU6050_t* mpud = {0};
 
@@ -117,6 +121,9 @@ int main(void) {
 	  }
 	  if(currTick - dataLogTick > 2000) {
 		  dataLogTick = currTick;
+		  HAL_GPIO_WritePin(FIO_CS_Port, FIO_CS_Pin, GPIO_PIN_RESET);
+		  HAL_SPI_Transmit(&FIO_SPI, (uint8_t *)temperature, sizeof(temperature), 1000);
+		  HAL_GPIO_WritePin(FIO_CS_Port, FIO_CS_Pin, GPIO_PIN_SET);
 	  }
 	  if(genericCmd != newGenericCmd) {
 		  switch(genericCmd) {
@@ -127,9 +134,36 @@ int main(void) {
 	  }
 	  if(panPos != newPanPos) {
 		  panPos = newPanPos;
+		  Servo_write(SERVO_PAN, panPos);
 	  }
 	  if(tiltPos != newTiltPos) {
 		  tiltPos = newTiltPos;
+		  Servo_write(SERVO_TILT, tiltPos);
+	  }
+	  if(adc_available) {
+		  uint64_t t = 0;
+		  if(adc_read(&t) == 0) {
+			  uint32_t val = t&0xfff;
+			  switch(t>>32) {  //set values here
+				  case ADC_CHANNEL_VREFINT:
+					  vref = val;
+					  break;
+				  case ADC_CHANNEL_10:
+					  humidity = val;
+					  break;
+				  default:
+					  break;
+			  }
+		  }
+	  }
+	  if(rx_available) {
+		  if(rx_read(&cmdbuf) == 0) Xbee_rxStateMachine(cmdbuf);
+	  }
+	  if(xbee_available) {
+		  uint8_t* payload = 0;
+		  size_t length = 0;
+		  if(xrx_read(&payload, &length) == 0) decodePayload(payload, length);
+		  free(payload);
 	  }
   }
 }

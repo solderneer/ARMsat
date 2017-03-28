@@ -11,11 +11,11 @@ TIM_HandleTypeDef* htim;
 
 void Servo_Init(TIM_HandleTypeDef* h, uint32_t initPanPos, uint32_t initTiltPos) {
 	htim = h;
-	HAL_TIM_PWM_Start(htim, SERVO_PAN_CHAN);
-	HAL_TIM_PWM_Start(htim, SERVO_TILT_CHAN);
+	HAL_TIM_PWM_Start(htim, SERVO_PAN);
+	HAL_TIM_PWM_Start(htim, SERVO_TILT);
 
-	Servo_write(SERVO_PAN_CHAN, initPanPos);
-	Servo_write(SERVO_TILT_CHAN, initTiltPos);
+	Servo_write(SERVO_PAN, initPanPos);
+	Servo_write(SERVO_TILT, initTiltPos);
 }
 
 int mapi(int x, int in_min, int in_max, int out_min, int out_max) {
