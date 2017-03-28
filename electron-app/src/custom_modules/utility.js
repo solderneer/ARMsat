@@ -181,10 +181,15 @@ export var connectRoutine = function () {
         document.getElementById('connect-btn').src = "assets/unlink.png";
         document.getElementsByClassName('right')[0].className = "lessright";
         document.getElementsByClassName('lessright')[0].innerHTML = "Disconnect";
+
+        tabSwitch("home");
+        tabSwitch("telemetry");
+        tabSwitch("graphing");
+        tabSwitch("settings");
 }
 
 
-export var tabSwitch = function (y, currentActive) {
+var tabSwitch = function (y, currentActive) {
     document.getElementById(y).addEventListener('click', function(c){
         var x = document.getElementById(y);
         console.log(x.classList.length);

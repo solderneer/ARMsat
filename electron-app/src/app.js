@@ -8,6 +8,7 @@ import jetpack from 'fs-jetpack'; // module loaded from npm
 import env from './env';
 var SerialPort = require("serialport");
 window.jQuery = window.$ = require('jquery');
+var Chart = require('chart.js')
 import {    date, 
             time, 
             consoleLog, 
@@ -15,8 +16,7 @@ import {    date,
             consoleError, 
             listSerialDevices, 
             connectRoutine, 
-            consoleSuccess,
-            tabSwitch       } from './custom_modules/utility';
+            consoleSuccess} from './custom_modules/utility';
 
 console.log('Loaded environment variables:', env);
 
@@ -43,15 +43,65 @@ document.addEventListener('DOMContentLoaded', function () {
     var heading = $.flightIndicator('#heading', 'heading', {heading:150, showBox:true, size:325});
     var altimeter = $.flightIndicator('#altimeter', 'altimeter', {size:325, showBox : true});
 
+    var ctx = document.getElementById("myChart");
+    var data = {
+    labels: [1, 2, 3, 4, 5, 6, 7],
+    datasets: [
+        {
+            label: "My First dataset",
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: "rgba(75,192,192,0.4)",
+            borderColor: "rgba(75,192,192,1)",
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: "rgba(75,192,192,1)",
+            pointBackgroundColor: "#fff",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+            pointHoverBorderColor: "rgba(220,220,220,1)",
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data: [65, 59, 80, 81, 56, 55, 40],
+            spanGaps: false,
+         }
+        ]
+    };
+
+    var latestLabel = 8;
+
+    var myLineChart = new Chart(ctx, {
+    type: 'line',
+    data: data,
+    options: {animationSteps: 15}
+});
+
+    setInterval(function(){
+    console.log("Run");
+    console.log(myLineChart.data.labels);
+
+    myLineChart.data.labels.push(latestLabel);
+    myLineChart.data.datasets[0].data.push(100);
+
+    myLineChart.data.labels.splice(0,1);
+    myLineChart.data.datasets[0].data.splice(0,1);
+
+    console.log(myLineChart.data.labels);
+    console.log(myLineChart.data.datasets[0].data);
+    latestLabel++;
+
+    myLineChart.update();
+    }, 5000);
+
     document.getElementById("connect-btn").addEventListener('click', function (e) {
         
             if(document.getElementsByClassName('lessright')[0] == null){
                 //connect to the selected devices
                 connectRoutine();
-                tabSwitch("home");
-                tabSwitch("telemetry");
-                tabSwitch("graphing");
-                tabSwitch("settings");
                 // Update at 20Hz
                 var increment = 0;
                 setInterval(function() {
