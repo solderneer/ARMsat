@@ -46,7 +46,9 @@ uint32_t newPanPos = 0;
 uint32_t tiltPos = 0;
 uint32_t newTiltPos = 0;
 
-uint32_t vref = 1489; //1.2v nominal, temp-dependent
+uint32_t vref = 1500; //1.2v nominal, temp-dependent
+uint32_t vref_avg = 0;
+uint32_t vref_i = 0;
 
 MPU6050_t* mpud = {0};
 
@@ -141,20 +143,58 @@ int main(void) {
 		  Servo_write(SERVO_TILT, tiltPos);
 	  }
 	  if(adc_available) {
-		  uint64_t t = 0;
-		  if(adc_read(&t) == 0) {
-			  uint32_t val = t&0xfff;
-			  switch(t>>32) {  //set values here
-				  case ADC_CHANNEL_VREFINT:
-					  vref = val;
-					  break;
-				  case ADC_CHANNEL_10:
-					  humidity = val;
-					  break;
-				  default:
-					  break;
-			  }
+		  adc_available = 0;
+		  uint32_t val = HAL_ADC_GetValue(&hadc1);
+		  switch(adc_chan) {
+			  case ADC_CHANNEL_VREFINT:
+				  vref_avg += val;
+				  if(++vref_i>=1024) {
+					  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+					  vref = vref_avg>>10;
+					  vref_avg = 0;
+					  vref_i = 0;
+				  }
+				  adc_chan = ADC_CHANNEL_0;
+				  break;
+			  case ADC_CHANNEL_0:
+				  adc_chan = ADC_CHANNEL_1;
+				  break;
+			  case ADC_CHANNEL_1:
+				  adc_chan = ADC_CHANNEL_4;
+				  break;
+			  case ADC_CHANNEL_4:
+				  adc_chan = ADC_CHANNEL_6;
+				  break;
+			  case ADC_CHANNEL_6:
+				  adc_chan = ADC_CHANNEL_7;
+				  break;
+			  case ADC_CHANNEL_7:
+				  adc_chan = ADC_CHANNEL_8;
+				  break;
+			  case ADC_CHANNEL_8:
+				  adc_chan = ADC_CHANNEL_9;
+				  break;
+			  case ADC_CHANNEL_9:
+				  adc_chan = ADC_CHANNEL_10;
+				  break;
+			  case ADC_CHANNEL_10:
+				  humidity = val;
+				  adc_chan = ADC_CHANNEL_11;
+				  break;
+			  case ADC_CHANNEL_11:
+				  adc_chan = ADC_CHANNEL_14;
+				  break;
+			  case ADC_CHANNEL_14:
+				  adc_chan = ADC_CHANNEL_15;
+				  break;
+			  default:
+			  case ADC_CHANNEL_15:
+				  adc_chan = ADC_CHANNEL_VREFINT;
+				  break;
 		  }
+		  ADC_ChannelConfTypeDef c = {adc_chan,1,ADC_SAMPLETIME_3CYCLES,0};
+		  HAL_ADC_ConfigChannel(&hadc1, &c);
+		  HAL_ADC_Start_IT(&hadc1);
 	  }
 	  if(rx_available) {
 		  if(rx_read(&cmdbuf) == 0) Xbee_rxStateMachine(cmdbuf);

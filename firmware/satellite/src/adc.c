@@ -38,9 +38,8 @@
 #include "gpio.h"
 
 /* USER CODE BEGIN 0 */
-adc_ring_buffer_t adcx = {{0}, 0, 0};
-volatile uint16_t adc_val = 0;
-volatile uint32_t adc_chan = ADC_CHANNEL_VREFINT;
+volatile uint32_t adc_available = 0;
+uint32_t adc_chan = ADC_CHANNEL_VREFINT;
 /* USER CODE END 0 */
 
 ADC_HandleTypeDef hadc1;
@@ -71,7 +70,7 @@ void MX_ADC1_Init(void)
 
     /**Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. 
     */
-  sConfig.Channel = ADC_CHANNEL_0;
+  sConfig.Channel = ADC_CHANNEL_VREFINT;
   sConfig.Rank = 1;
   sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
@@ -174,64 +173,7 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
 /* USER CODE BEGIN 1 */
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
-	adc_val = HAL_ADC_GetValue(hadc);
-	int i = (unsigned int) (adcx.head + 1) & ADC_BUF_SIZEOP;
-	if (i != adcx.tail) {
-		adcx.buffer[adcx.head] = adc_chan;
-		adcx.buffer[adcx.head] <<= 32;
-		adcx.buffer[adcx.head] |= adc_val&0xfff;
-		adcx.head = i;
-	}
-	switch(adc_chan) {
-		case ADC_CHANNEL_VREFINT:
-			adc_chan = ADC_CHANNEL_0;
-			break;
-		case ADC_CHANNEL_0:
-			adc_chan = ADC_CHANNEL_1;
-			break;
-		case ADC_CHANNEL_1:
-			adc_chan = ADC_CHANNEL_4;
-			break;
-		case ADC_CHANNEL_4:
-			adc_chan = ADC_CHANNEL_6;
-			break;
-		case ADC_CHANNEL_6:
-			adc_chan = ADC_CHANNEL_7;
-			break;
-		case ADC_CHANNEL_7:
-			adc_chan = ADC_CHANNEL_8;
-			break;
-		case ADC_CHANNEL_8:
-			adc_chan = ADC_CHANNEL_9;
-			break;
-		case ADC_CHANNEL_9:
-			adc_chan = ADC_CHANNEL_10;
-			break;
-		case ADC_CHANNEL_10:
-			adc_chan = ADC_CHANNEL_11;
-			break;
-		case ADC_CHANNEL_11:
-			adc_chan = ADC_CHANNEL_14;
-			break;
-		case ADC_CHANNEL_14:
-			adc_chan = ADC_CHANNEL_15;
-			break;
-		default:
-		case ADC_CHANNEL_15:
-			adc_chan = ADC_CHANNEL_VREFINT;
-			break;
-	}
-	ADC_ChannelConfTypeDef c = {adc_chan,1,ADC_SAMPLETIME_3CYCLES,0};
-	HAL_ADC_ConfigChannel(hadc, &c);
-	HAL_ADC_Start_IT(hadc);
-}
-
-uint16_t adc_read(uint64_t *buf) {
-	// if the head isn't ahead of the tail, we don't have any characters
-	if (adcx.head == adcx.tail) return ADC_BUF_EMPTY;
-	*buf = adcx.buffer[adcx.tail];
-	adcx.tail = (unsigned int) (adcx.tail + 1) & ADC_BUF_SIZEOP; //fixed bug where & was somehow turned to %... thats why 1023 became 0... @11.21pm 24/5/2013
-	return 0;
+	adc_available = 1;
 }
 /* USER CODE END 1 */
 

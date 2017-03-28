@@ -49,13 +49,6 @@
 extern ADC_HandleTypeDef hadc1;
 
 /* USER CODE BEGIN Private defines */
-#define ADC_BUFFER_SIZE 128
-#define ADC_BUF_SIZEOP (ADC_BUFFER_SIZE - 1)//1023
-
-#define adc_available ((ADC_BUFFER_SIZE+adcx.head-adcx.tail) & ADC_BUF_SIZEOP)
-#define adc_empty (adcx.head == adcx.tail)
-
-#define ADC_BUF_EMPTY 0x100
 /* USER CODE END Private defines */
 
 extern void Error_Handler(void);
@@ -63,16 +56,8 @@ extern void Error_Handler(void);
 void MX_ADC1_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-
-typedef struct {
-    uint64_t buffer[ADC_BUFFER_SIZE];
-    uint16_t head;
-    uint16_t tail;
-} adc_ring_buffer_t;
-
-extern adc_ring_buffer_t adcx;
-
-uint16_t adc_read(uint64_t *buf);
+volatile uint32_t adc_available;
+uint32_t adc_chan;
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
