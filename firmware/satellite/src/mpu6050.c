@@ -251,3 +251,4 @@ MPU6050_Result_t MPU6050_ReadAll(MPU6050_t* DataStruct) {
 	return MPU6050_Result_Ok;
 }
 
+
