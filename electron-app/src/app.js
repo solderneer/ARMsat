@@ -17,6 +17,7 @@ import {    date,
             listSerialDevices, 
             connectRoutine, 
             consoleSuccess} from './custom_modules/utility';
+import { graphInit, graphAddDatapoint} from './custom_modules/graph'
 
 console.log('Loaded environment variables:', env);
 
@@ -43,58 +44,14 @@ document.addEventListener('DOMContentLoaded', function () {
     var heading = $.flightIndicator('#heading', 'heading', {heading:150, showBox:true, size:325});
     var altimeter = $.flightIndicator('#altimeter', 'altimeter', {size:325, showBox : true});
 
-    var ctx = document.getElementById("myChart");
-    var data = {
-    labels: [],
-    datasets: [
-        {
-            label: "My First dataset",
-            fill: false,
-            lineTension: 0,
-            backgroundColor: "rgba(75,192,192,0.4)",
-            borderColor: "rgba(75,192,192,1)",
-            borderCapStyle: 'butt',
-            borderDash: [0],
-            borderDashOffset: 0.0,
-            borderJoinStyle: 'miter',
-            pointBorderColor: "rgba(75,192,192,1)",
-            pointBackgroundColor: "#fff",
-            pointBorderWidth: 1,
-            pointHoverRadius: 5,
-            pointHoverBackgroundColor: "rgba(75,192,192,1)",
-            pointHoverBorderColor: "rgba(220,220,220,1)",
-            pointHoverBorderWidth: 2,
-            pointRadius: 1,
-            pointHitRadius: 10,
-            data: [0],
-            spanGaps: false,
-         }
-        ]
-    };
-
-    var latestLabel = 1;
     var increment = 0;
-    var myLineChart = new Chart(ctx, {
-    type: 'line',
-    data: data,
-    options: {animationSteps: 0}
-});
+    graphInit();
 
-  setInterval(function(){
-                        myLineChart.data.labels.push(latestLabel);
-                        myLineChart.data.datasets[0].data.push(30*Math.sin(increment/10));
+    setInterval(function(){
+        graphAddDatapoint(increment, 30*Math.sin(increment/10));
 
-                        if(latestLabel > 100){
-                            myLineChart.data.labels.splice(0,1);
-                            myLineChart.data.datasets[0].data.splice(0,1);
-                        }
-
-                        console.log(latestLabel);
-                        latestLabel++;
-
-                        myLineChart.update();
-                        increment++;
-                    }, 50);
+        increment++;
+    }, 50);
 
     document.getElementById("connect-btn").addEventListener('click', function (e) {
         

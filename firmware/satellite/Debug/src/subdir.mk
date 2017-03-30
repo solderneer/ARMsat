@@ -14,6 +14,7 @@ C_SRCS += \
 ../src/payload.c \
 ../src/pressure.c \
 ../src/servo.c \
+../src/six_axis_comp_filter.c \
 ../src/spi.c \
 ../src/stm32f4xx_hal_msp.c \
 ../src/stm32f4xx_it.c \
@@ -33,6 +34,7 @@ OBJS += \
 ./src/payload.o \
 ./src/pressure.o \
 ./src/servo.o \
+./src/six_axis_comp_filter.o \
 ./src/spi.o \
 ./src/stm32f4xx_hal_msp.o \
 ./src/stm32f4xx_it.o \
@@ -52,6 +54,7 @@ C_DEPS += \
 ./src/payload.d \
 ./src/pressure.d \
 ./src/servo.d \
+./src/six_axis_comp_filter.d \
 ./src/spi.d \
 ./src/stm32f4xx_hal_msp.d \
 ./src/stm32f4xx_it.d \
