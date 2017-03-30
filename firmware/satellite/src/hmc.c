@@ -25,7 +25,7 @@ int smoothHeadingDegrees = 0;
 uint8_t hmc_buf[16] = {0};
 
 void HMC_init(I2C_HandleTypeDef* h) {
-	h = hi2c;
+	hi2c = h;
 	if ((HMC_fastRegister8(HMC5883L_REG_IDENT_A) != 0x48)
 			|| (HMC_fastRegister8(HMC5883L_REG_IDENT_B) != 0x34)
 			|| (HMC_fastRegister8(HMC5883L_REG_IDENT_C) != 0x33))
