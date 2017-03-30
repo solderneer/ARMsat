@@ -27,8 +27,6 @@ typedef struct {
 	float hmc_x;
 	float hmc_y;
 	float hmc_z;
-	uint16_t voltage_3v3;
-	uint16_t voltage_5v;
 	uint16_t current;
 	uint16_t voltage_cell1;
 	uint16_t voltage_cell2;

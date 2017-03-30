@@ -21,6 +21,7 @@
 #include "hmc.h"
 #include "payload.h"
 #include "mpu6050.h"
+#include "six_axis_comp_filter.h"
 #include "servo.h"
 #include "stdlib.h"
 #include "diag/Trace.h"
@@ -50,7 +51,14 @@ uint32_t vref = 1500; //1.2v nominal, temp-dependent
 uint32_t vref_avg = 0;
 uint32_t vref_i = 0;
 
+uint32_t voltage_cell1 = 0;
+uint32_t voltage_cell2 = 0;
+uint32_t voltage_cell3 = 0;
+uint32_t current = 0;
+uint32_t dust_conc = 0;
+
 MPU6050_t* mpud = {0};
+SixAxis* sxf = {0};
 
 int main(void) {
 
@@ -68,13 +76,15 @@ int main(void) {
   MX_USART2_UART_Init();
   MX_USART6_UART_Init();
 
-  SID_UART_Receive_IT_Setup(&huart6);
+  SID_UART_Receive_IT_Setup(&XBEE_UART);
   Servo_Init(&htim1, panPos, tiltPos);
   MPU6050_Init(mpud, MPU6050_Device_0, MPU6050_Accelerometer_2G, MPU6050_Gyroscope_250s, &hi2c1);
   HAL_ADC_Start_IT(&hadc1);
   Pressure_Init(&hi2c1);
   HMC_init(&hi2c1);
   Xbee_init(&XBEE_UART);
+  CompInit(sxf, 0.05f, 2.0f);
+  CompStart(sxf);
 
   currTick = HAL_GetTick();
 
@@ -120,12 +130,37 @@ int main(void) {
 		  Pressure_get();
 		  HMC_calculate();
 		  MPU6050_ReadAll(mpud);
+		  CompAccelUpdate(sxf,(float)mpud->Accelerometer_X,(float)mpud->Accelerometer_Y,(float)mpud->Accelerometer_Z);
+		  CompGyroUpdate(sxf,(float)mpud->Gyroscope_X,(float)mpud->Gyroscope_Y,(float)mpud->Gyroscope_Z);
+		  //TODO: use sxf->compAngleX and sxf->compAngleY to modify servo pos
 	  }
-	  if(currTick - dataLogTick > 2000) {
+	  if(currTick - dataLogTick > 1000) {
 		  dataLogTick = currTick;
-		  HAL_GPIO_WritePin(FIO_CS_Port, FIO_CS_Pin, GPIO_PIN_RESET);
-		  HAL_SPI_Transmit(&FIO_SPI, (uint8_t *)temperature, sizeof(temperature), 1000);
-		  HAL_GPIO_WritePin(FIO_CS_Port, FIO_CS_Pin, GPIO_PIN_SET);
+		  uint8_t data[25] = {0xab,0xcd,
+							  ((uint16_t)humidity)>>8,
+							  ((uint16_t)humidity&0xff),
+							  ((uint16_t)temperature>>8),
+							  ((uint16_t)temperature&0xff),
+							  ((uint32_t)pressure>>24),
+							  (((uint32_t)pressure)>>16)&0xff,
+							  (((uint32_t)pressure)>>8)&0xff,
+							  ((uint32_t)pressure)&0xff,
+							  (uint16_t)altitude>>8,
+							  (uint16_t)altitude&0xff,
+							  (uint16_t)dust_conc>>8,
+							  (uint16_t)dust_conc&0xff,
+							  (uint16_t)smoothHeadingDegrees>>8,
+							  (uint16_t)smoothHeadingDegrees&0xff,
+							  ((uint16_t)voltage_cell1>>8),
+							  ((uint16_t)voltage_cell1&0xff),
+							  ((uint16_t)voltage_cell2>>8),
+							  ((uint16_t)voltage_cell2&0xff),
+							  ((uint16_t)voltage_cell3>>8),
+							  ((uint16_t)voltage_cell3&0xff),
+							  ((uint16_t)current>>8),
+							  ((uint16_t)current&0xff),
+							  0x55};
+		  HAL_UART_Transmit(&FIO_UART, data, sizeof(data), 1000);
 	  }
 	  if(genericCmd != newGenericCmd) {
 		  switch(genericCmd) {
@@ -151,6 +186,7 @@ int main(void) {
 				  if(++vref_i>=1024) {
 					  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 					  vref = vref_avg>>10;
+					  voltage_cell1 = vref;
 					  vref_avg = 0;
 					  vref_i = 0;
 				  }

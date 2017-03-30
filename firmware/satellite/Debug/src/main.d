@@ -36,7 +36,8 @@ src/main.o: ../src/main.c ../include/main.h \
  ../include/usart.h ../include/uart.h ../include/gpio.h \
  ../include/pressure.h ../include/xbee.h ../include/hmc.h \
  ../include/payload.h ../include/mpu6050.h ../include/i2c.h \
- ../include/servo.h ../system/include/diag/Trace.h
+ ../include/six_axis_comp_filter.h ../include/servo.h \
+ ../system/include/diag/Trace.h
 
 ../include/main.h:
 
@@ -135,6 +136,8 @@ src/main.o: ../src/main.c ../include/main.h \
 ../include/mpu6050.h:
 
 ../include/i2c.h:
+
+../include/six_axis_comp_filter.h:
 
 ../include/servo.h:
 
