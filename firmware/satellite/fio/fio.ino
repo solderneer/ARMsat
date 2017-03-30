@@ -2,7 +2,7 @@
 #include <SD.h>
 
 const int chipSelect = 17;
-bool x = true;
+bool x = false;
 uint8_t cmdbuf = 0;
 uint8_t rx_i = 0;
 
@@ -10,6 +10,7 @@ uint16_t temperature;
 uint16_t humidity;
 uint32_t pressure;
 uint16_t altitude;
+uint16_t wind_speed;
 uint16_t dust_conc;
 uint16_t heading;
 uint16_t voltage_cell1;
@@ -19,12 +20,15 @@ uint16_t current;
 
 void setup() {
 	pinMode(LED_BUILTIN, OUTPUT);
-	digitalWrite(LED_BUILTIN, HIGH); 
+	digitalWrite(LED_BUILTIN, LOW); 
 	Serial1.begin(57600);
 	while(!SD.begin(chipSelect)) {
 		;
 	}
-	digitalWrite(LED_BUILTIN, LOW);
+	File dataFile = SD.open("data.csv", FILE_WRITE);
+	dataFile.println("\"Humidity (%RH)\",\"Temperature (deg C)\",\"Pressure (Pa)\",\"Altitude (m)\",\"Heading (deg)\",\"Wind speed (Km/h)\",\"Dust concentration (%)\",\"Vcell 1 (V)\",\"Vcell 2 (V)\",\"Vcell3 (V)\",\"Current (mA)\"");
+	dataFile.close();
+	digitalWrite(LED_BUILTIN, HIGH);
 }
 
 void loop() {
@@ -85,92 +89,101 @@ void loop() {
 				rx_i++;
 				break;
 			case 12:
-				dust_conc = cmdbuf;
-				rx_i++;
-				break;
-			case 13:
-				dust_conc <<= 8;
-				dust_conc |= cmdbuf;
-				rx_i++;
-				break;
-			case 14:
 				heading = cmdbuf;
 				rx_i++;
 				break;
-			case 15:
+			case 13:
 				heading <<= 8;
 				heading |= cmdbuf;
 				rx_i++;
 				break;
+			case 14:
+				dust_conc = cmdbuf;
+				rx_i++;
+				break;
+			case 15:
+				dust_conc <<= 8;
+				dust_conc |= cmdbuf;
+				rx_i++;
+				break;
 			case 16:
-				voltage_cell1 = cmdbuf;
+				wind_speed = cmdbuf;
 				rx_i++;
 				break;
 			case 17:
+				wind_speed <<= 8;
+				wind_speed |= cmdbuf;
+				rx_i++;
+				break;
+			case 18:
+				voltage_cell1 = cmdbuf;
+				rx_i++;
+				break;
+			case 19:
 				voltage_cell1 <<= 8;
 				voltage_cell1 |= cmdbuf;
 				rx_i++;
 				break;
-			case 18:
+			case 20:
 				voltage_cell2 = cmdbuf;
 				rx_i++;
 				break;
-			case 19:
+			case 21:
 				voltage_cell2 <<= 8;
 				voltage_cell2 |= cmdbuf;
 				rx_i++;
 				break;
-			case 20:
+			case 22:
 				voltage_cell3 = cmdbuf;
 				rx_i++;
 				break;
-			case 21:
+			case 23:
 				voltage_cell3 <<= 8;
 				voltage_cell3 |= cmdbuf;
 				rx_i++;
 				break;
-			case 22:
+			case 24:
 				current = cmdbuf;
 				rx_i++;
 				break;
-			case 23:
+			case 25:
 				current <<= 8;
 				current |= cmdbuf;
 				rx_i++;
 				break;
-			case 24:
-				rx_i = cmdbuf == 0x55 ? 25 : 0;
+			case 26:
+				rx_i = cmdbuf == 0x55 ? 27 : 0;
 				break;
-			case 25: //IDLE till ready to rx again
+			case 27: //IDLE till ready to rx again
 				break;
 		}
 	}
-	if(rx_i == 25) {
-		File dataFile = SD.open("datalog.txt", FILE_WRITE);
-		dataFile.print("Humidity: ");
-		dataFile.println(humidity, DEC);
-		dataFile.print("Temp: ");
-		dataFile.println(temperature, DEC);
-		dataFile.print("Pressure: ");
-		dataFile.println(pressure, DEC);
-		dataFile.print("Altitude: ");
-		dataFile.println(altitude, DEC);
-		dataFile.print("Heading: ");
-		dataFile.println(heading, DEC);
-		dataFile.print("Dust conc: ");
-		dataFile.println(dust_conc, DEC);
-		dataFile.print("V1: ");
-		dataFile.println(voltage_cell1, DEC);
-		dataFile.print("V2: ");
-		dataFile.println(voltage_cell2, DEC);
-		dataFile.print("V3: ");
-		dataFile.println(voltage_cell3, DEC);
-		dataFile.print("Current: ");
+	if(rx_i == 27) {
+		File dataFile = SD.open("data.csv", FILE_WRITE);
+		dataFile.print(humidity, DEC);
+		dataFile.print(',');
+		dataFile.print(temperature, DEC);
+		dataFile.print(',');
+		dataFile.print(pressure, DEC);
+		dataFile.print(',');
+		dataFile.print(altitude, DEC);
+		dataFile.print(',');
+		dataFile.print(heading, DEC);
+		dataFile.print(',');
+		dataFile.print(wind_speed, DEC);
+		dataFile.print(',');
+		dataFile.print(dust_conc, DEC);
+		dataFile.print(',');
+		dataFile.print(voltage_cell1, DEC);
+		dataFile.print(',');
+		dataFile.print(voltage_cell2, DEC);
+		dataFile.print(',');
+		dataFile.print(voltage_cell3, DEC);
+		dataFile.print(',');
 		dataFile.println(current, DEC);
-		dataFile.println();
 		dataFile.close();
 		rx_i = 0;
 		digitalWrite(LED_BUILTIN, x?HIGH:LOW);
-		x = !x;
+    x = !x;
 	}
 }

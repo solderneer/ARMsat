@@ -56,6 +56,7 @@ uint32_t voltage_cell2 = 0;
 uint32_t voltage_cell3 = 0;
 uint32_t current = 0;
 uint32_t dust_conc = 0;
+uint32_t wind_speed = 0;
 
 MPU6050_t* mpud = {0};
 SixAxis* sxf = {0};
@@ -137,7 +138,7 @@ int main(void) {
 		}
 		if(currTick - dataLogTick > 1000) {
 			dataLogTick = currTick;
-			uint8_t data[25] = {0xab,0xcd,
+			uint8_t data[27] = {0xab,0xcd,
 					((uint16_t)humidity)>>8,
 					((uint16_t)humidity&0xff),
 					((uint16_t)temperature>>8),
@@ -148,10 +149,12 @@ int main(void) {
 					((uint32_t)pressure)&0xff,
 					(uint16_t)altitude>>8,
 					(uint16_t)altitude&0xff,
-					(uint16_t)dust_conc>>8,
-					(uint16_t)dust_conc&0xff,
 					(uint16_t)smoothHeadingDegrees>>8,
 					(uint16_t)smoothHeadingDegrees&0xff,
+					(uint16_t)dust_conc>>8,
+					(uint16_t)dust_conc&0xff,
+					(uint16_t)wind_speed>>8,
+					(uint16_t)wind_speed&0xff,
 					((uint16_t)voltage_cell1>>8),
 					((uint16_t)voltage_cell1&0xff),
 					((uint16_t)voltage_cell2>>8),
@@ -211,9 +214,9 @@ int main(void) {
 				adc_chan = ADC_CHANNEL_9;
 				break;
 			case ADC_CHANNEL_9:
-				adc_chan = ADC_CHANNEL_10;
+				adc_chan = ADC_HUMIDITY_CHAN;
 				break;
-			case ADC_CHANNEL_10:
+			case ADC_HUMIDITY_CHAN:
 				humidity = val;
 				adc_chan = ADC_CHANNEL_11;
 				break;

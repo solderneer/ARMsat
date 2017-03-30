@@ -49,6 +49,7 @@
 extern ADC_HandleTypeDef hadc1;
 
 /* USER CODE BEGIN Private defines */
+#define ADC_HUMIDITY_CHAN ADC_CHANNEL_10
 /* USER CODE END Private defines */
 
 extern void Error_Handler(void);

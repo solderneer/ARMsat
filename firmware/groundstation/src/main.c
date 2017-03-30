@@ -102,6 +102,8 @@ int main(void)
 	LCD_init(&hi2c1);
 	Pressure_Init(&hi2c1);
 
+	HAL_Delay(500); //for lcd
+
 	currTick = HAL_GetTick();
 	lcdTick = currTick;
 	sensorTick = currTick;
@@ -179,18 +181,18 @@ int main(void)
 					vref_avg = 0;
 					vref_i = 0;
 				}
-				adc_chan = ADC_CHANNEL_0;
+				adc_chan = ADC_JOYSTICK_X_CHAN;
 				break;
-			case ADC_CHANNEL_0:
+			case ADC_JOYSTICK_X_CHAN:
 				joystick_x_avg += val;
 				if(++joystick_x_i>=16) {
 					joystick_x = joystick_x_avg>>4;
 					joystick_x_avg = 0;
 					joystick_x_i = 0;
 				}
-				adc_chan = ADC_CHANNEL_1;
+				adc_chan = ADC_JOYSTICK_Y_CHAN;
 				break;
-			case ADC_CHANNEL_1:
+			case ADC_JOYSTICK_Y_CHAN:
 				joystick_y_avg += val;
 				if(++joystick_y_i>=16) {
 					joystick_y = joystick_y_avg>>4;
@@ -217,27 +219,27 @@ int main(void)
 			free(payload);
 		}
 		if(pcrx_available && pcrx_read(&cmdbuf) == 0) switch(cmdbuf) {
-		default:
-			HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-			break;
-		case 'l':
-			HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-			break;
-		case 'r':
-			NVIC_SystemReset();
-			break;
-		case 28: //left
-			joystick_x -= 10;
-			break;
-		case 29: //right
-			joystick_x += 10;
-			break;
-		case 30: //up
-			joystick_y += 10;
-			break;
-		case 31: //down
-			joystick_y -= 10;
-			break;
+			default:
+				HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+				break;
+			case 'l':
+				HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+				break;
+			case 'r':
+				NVIC_SystemReset();
+				break;
+			case 28: //left
+				joystick_x -= 10;
+				break;
+			case 29: //right
+				joystick_x += 10;
+				break;
+			case 30: //up
+				joystick_y += 10;
+				break;
+			case 31: //down
+				joystick_y -= 10;
+				break;
 		}
 	}
 }
