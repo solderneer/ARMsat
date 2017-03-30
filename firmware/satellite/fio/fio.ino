@@ -2,7 +2,7 @@
 #include <SD.h>
 
 const int chipSelect = 17;
-
+bool x = true;
 uint8_t cmdbuf = 0;
 uint8_t rx_i = 0;
 
@@ -36,7 +36,7 @@ void loop() {
 				if(cmdbuf==0xab) rx_i++;
 				break;
 			case 1:
-				if(cmdbuf==0xcd) rx_i++;
+				rx_i = cmdbuf == 0xcd ? 2 : 0;
 				break;
 			case 2:
 				humidity = cmdbuf;
@@ -170,5 +170,7 @@ void loop() {
 		dataFile.println();
 		dataFile.close();
 		rx_i = 0;
+		digitalWrite(LED_BUILTIN, x?HIGH:LOW);
+		x = !x;
 	}
 }

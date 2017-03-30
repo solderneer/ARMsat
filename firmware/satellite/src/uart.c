@@ -33,23 +33,6 @@ void SID_UART_IRQHandler(UART_HandleTypeDef *huart) {
 	}
 }
 
-
- HAL_StatusTypeDef SID_UART_Receive_IT(UART_HandleTypeDef *huart)
- {
-	 if(huart->Instance != USART6) goto rx_end;
-	 if(huart->RxState == HAL_UART_STATE_BUSY_RX) {
-		 char recv = (uint_fast8_t)(huart->Instance->DR & (uint8_t)0x00FFU);
-		 int i = (unsigned int) (rx.head + 1) & SERIAL_BUF_SIZEOP;
-		 if (i != rx.tail) {
-			 rx.buffer[rx.head] = recv;
-			 rx.head = i;
-		 }
-		 return HAL_OK;
-	 }
-	 rx_end:
-	 return HAL_BUSY;
- }
-
 uint16_t rx_peek(void) {
     if (rx.head == rx.tail) return BUF_EMPTY;
     return rx.buffer[rx.tail];

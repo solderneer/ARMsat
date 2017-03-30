@@ -14,9 +14,7 @@
 #define SERIAL_BUF_SIZEOP (SERIAL_BUFFER_SIZE - 1)//1023
 
 #define rx_available ((SERIAL_BUFFER_SIZE+rx.head-rx.tail) & SERIAL_BUF_SIZEOP)
-#define tx_available ((SERIAL_BUFFER_SIZE+tx.head-tx.tail) & SERIAL_BUF_SIZEOP)
 #define rx_empty (pcrx.head == pcrx.tail)
-#define tx_empty (camrx.head == camrx.tail)
 
 #define BUF_EMPTY 0x100
 

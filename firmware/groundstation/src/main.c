@@ -44,6 +44,7 @@
 #include "hmc.h"
 #include "xbee.h"
 #include "payload.h"
+#include "stdlib.h"
 
 void SystemClock_Config(void);
 void Error_Handler(void);
@@ -67,12 +68,12 @@ uint32_t vref = 1500; //1.2v nominal, temp-dependent
 uint32_t vref_avg = 0;
 uint32_t vref_i = 0;
 
-uint32_t joystick_x;
-uint32_t joystick_x_avg = 0;
+int32_t joystick_x;
+int32_t joystick_x_avg = 0;
 uint32_t joystick_x_i = 0;
 
-uint32_t joystick_y;
-uint32_t joystick_y_avg = 0;
+int32_t joystick_y;
+int32_t joystick_y_avg = 0;
 uint32_t joystick_y_i = 0;
 
 GPIO_PinState joystick_btn;
@@ -112,7 +113,7 @@ int main(void)
 	{
 		if(currTick - secondTick > 1000) {
 			secondTick = currTick;
-			//HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+			HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 		}
 		if(!pressureDelayTicks && pressureDelayState) switch(pressureDelayState) {
 		case 1:
@@ -137,6 +138,34 @@ int main(void)
 				}
 				lcdKey = newKey;
 			}
+		}
+		if(currTick - pcWriteTick > 1000) {
+			pcWriteTick = currTick;
+			uint8_t data[25] = {0xab,0xcd,
+					((uint16_t)humidity)>>8,
+					((uint16_t)humidity&0xff),
+					((uint16_t)temperature>>8),
+					((uint16_t)temperature&0xff),
+					((uint32_t)pressure>>24),
+					(((uint32_t)pressure)>>16)&0xff,
+					(((uint32_t)pressure)>>8)&0xff,
+					((uint32_t)pressure)&0xff,
+					(uint16_t)altitude>>8,
+					(uint16_t)altitude&0xff,
+					(uint16_t)dust_conc>>8,
+					(uint16_t)dust_conc&0xff,
+					(uint16_t)smoothHeadingDegrees>>8,
+					(uint16_t)smoothHeadingDegrees&0xff,
+					((uint16_t)voltage_cell1>>8),
+					((uint16_t)voltage_cell1&0xff),
+					((uint16_t)voltage_cell2>>8),
+					((uint16_t)voltage_cell2&0xff),
+					((uint16_t)voltage_cell3>>8),
+					((uint16_t)voltage_cell3&0xff),
+					((uint16_t)current>>8),
+					((uint16_t)current&0xff),
+					0x55};
+			HAL_UART_Transmit(&PC_UART, data, sizeof(data), 1000);
 		}
 		if(adc_available) {
 			adc_available = 0;
@@ -190,6 +219,24 @@ int main(void)
 		if(pcrx_available && pcrx_read(&cmdbuf) == 0) switch(cmdbuf) {
 		default:
 			HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+			break;
+		case 'l':
+			HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+			break;
+		case 'r':
+			NVIC_SystemReset();
+			break;
+		case 28: //left
+			joystick_x -= 10;
+			break;
+		case 29: //right
+			joystick_x += 10;
+			break;
+		case 30: //up
+			joystick_y += 10;
+			break;
+		case 31: //down
+			joystick_y -= 10;
 			break;
 		}
 	}
