@@ -48,8 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
     graphInit();
 
     setInterval(function(){
-        graphAddDatapoint(increment, 30*Math.sin(increment/10));
-
+        graphAddDatapoint(30*Math.sin(increment/10));
         increment++;
     }, 50);
 

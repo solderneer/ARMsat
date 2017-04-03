@@ -1,33 +1,5 @@
 var SerialPort = require("serialport");
-let struct = require('cstruct');
 var jquery = require('jquery');
-
-const Sensors = struct `
-    int16_t humidity, temperature;
-    int32_t pressure;
-    uint16_t altitude, particulate_matter, ozone_concentration, wind_speed;
-    float hmc_x, hmc_y, hmc_z;
-`
-
-const vc = struct `
-    uint16_t voltage_3v3, voltage_5v, current, voltage_cell1, voltage_cell2, voltage_cell3, voltage_batt;
-`
-
-const Control = struct `
-    uint16_t generic_cmd, pan_pos, tilt_pos;
-`
-
-const payload = struct `
-    uint16_t sanity_check1;
-    uint32_t type;
-    int16_t humidity, temperature;
-    int32_t pressure;
-    uint16_t altitude, particulate_matter, ozone_concentration, wind_speed;
-    float hmc_x, hmc_y, hmc_z;
-    uint16_t voltage_3v3, voltage_5v, current, voltage_cell1, voltage_cell2, voltage_cell3, voltage_batt;
-    uint16_t generic_cmd, pan_pos, tilt_pos;
-    uint16_t crc, sanity_check2;
-`
 
 export var date = function () {
     var today = new Date();

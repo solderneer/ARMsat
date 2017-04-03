@@ -1,15 +1,17 @@
 var Chart = require('chart.js')
 
-var myLineChart;
-var latestLabel = 0;
+var Chart1;
+var Chart2;
+var chart1Label = 0;
+var chart2Label = 0;
 
 export var graphInit = function () {
-    var ctx = document.getElementById("myChart");
+    var ctx = document.getElementById("Graph1");
     var data = {
     labels: [],
     datasets: [
         {
-            label: "My First dataset",
+            label: "Pressure",
             fill: false,
             lineTension: 0,
             backgroundColor: "rgba(75,192,192,0.4)",
@@ -32,24 +34,26 @@ export var graphInit = function () {
          }
         ]
     };
-
-        myLineChart = new Chart(ctx, {
+        Chart1 = new Chart(ctx, {
         type: 'line',
         data: data,
         options: {animationSteps: 15, scales:{xAxes: [{display: false}]}, tooltips: {enabled: false}}
     });
-
 };
 
-export var graphAddDatapoint = function (label, data){
-    myLineChart.data.labels.push(latestLabel);
-    myLineChart.data.datasets[0].data.push(data);
+export var graphAddDatapoint = function (data){
+    Chart1.data.labels.push(chart1Label);
+    Chart1.data.datasets[0].data.push(data);
 
-    if(latestLabel > 100){
-        myLineChart.data.labels.splice(0,1);
-        myLineChart.data.datasets[0].data.splice(0,1);
+    if(chart1Label > 100){
+        Chart1.data.labels.splice(0,1);
+        Chart1.data.datasets[0].data.splice(0,1);
     }
 
-    latestLabel++;
-    myLineChart.update();
+    chart1Label++;
+    Chart1.update();
+};
+
+export var graphChangeDataType = function() {
+
 };
