@@ -1,5 +1,29 @@
 var SerialPort = require("serialport");
 var jquery = require('jquery');
+var Parser = require('binary-parser').Parser;
+
+var payload = new Parser()
+    .endianess('big')
+    .uint16('humidity')
+    .uint16('temperature')
+    .uint32('pressure')
+    .uint16('altitude')
+    .uint16('dustconc')
+    .uint16('heading')
+    .uint16('voltage_cell1')
+    .uint16('voltage_cell2')
+    .uint16('voltage_cell3')
+    .uint16('current');
+
+/*var ipHeader = new Parser()
+    .endianess('little')
+    .uint16('humidity')
+    .uint16('temperature')
+    .uint32('pressure')
+    .uint16('altitude')
+    .uint16('heading')
+    .uint16('checksu');*/
+
 
 export var date = function () {
     var today = new Date();
@@ -103,11 +127,11 @@ export var connectRoutine = function () {
             consoleError('No baudrate selected');
             return;
         }
-        /*
+        
         if(selCOMport == "COM port"){
             consoleError('No COM port selected');
             return;
-        }*/
+        }
 
         //Connect to camera
         consoleLog('Connecting to camera...');
@@ -130,25 +154,24 @@ export var connectRoutine = function () {
         })
 
         selBaudrate = parseInt(selBaudrate);
-        /*
-        //Connect to serialport
+
         var port = new SerialPort(selCOMport, { baudRate: selBaudrate,
-                                                parser: SerialPort.parsers.byteDelimiter([190,186])}, function (err) {
+                                                parser: SerialPort.parsers.byteDelimiter([171,205])}, function (err) {
             if (err) {
                 return console.log('Error:', err.message);
             }
         });
 
-        let thing = { sanity_check1:0xcafe, sanity_check2:0xbabe, crc:0xd00d, type:1 };
-        console.log(payload.writeLE(thing));
-        console.log(typeof payload.writeLE(thing));
-
         port.on('data', function (data) {
-            console.log(toHexString(data)+"\n");
-            //let raw = new Buffer(data, 'binary');
-            //let procdata = payload.readLE(raw);
-            //console.log(procdata);
-        });*/
+            data = toHexString(data);
+            //var buf = new Buffer(data, 'hex');
+            //payload.parse(buf);
+            //console.log(data);
+            var buf = new Buffer('117109a40002041e0000182f010329e68feddb694951', 'hex');
+            console.log(payload.parse(buf));
+
+
+        });
 
         document.getElementById('connect-btn').src = "assets/unlink.png";
         document.getElementsByClassName('right')[0].className = "lessright";
