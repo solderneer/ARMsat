@@ -2,29 +2,6 @@ var SerialPort = require("serialport");
 var jquery = require('jquery');
 var Parser = require('binary-parser').Parser;
 
-var payload = new Parser()
-    .endianess('big')
-    .uint16('humidity')
-    .uint16('temperature')
-    .uint32('pressure')
-    .uint16('altitude')
-    .uint16('dustconc')
-    .uint16('heading')
-    .uint16('voltage_cell1')
-    .uint16('voltage_cell2')
-    .uint16('voltage_cell3')
-    .uint16('current');
-
-/*var ipHeader = new Parser()
-    .endianess('little')
-    .uint16('humidity')
-    .uint16('temperature')
-    .uint32('pressure')
-    .uint16('altitude')
-    .uint16('heading')
-    .uint16('checksu');*/
-
-
 export var date = function () {
     var today = new Date();
     var dd = today.getDate();
@@ -98,7 +75,7 @@ function toHexString(byteArray) {
   }).join('')
 }
 
-export var connectRoutine = function () {
+export var connectRoutine = function (SerialInit, attitude, heading, altimeter) {
     /**
      * Connect Routine
      */
@@ -128,10 +105,10 @@ export var connectRoutine = function () {
             return;
         }
         
-        if(selCOMport == "COM port"){
+        /*if(selCOMport == "COM port"){
             consoleError('No COM port selected');
             return;
-        }
+        }*/
 
         //Connect to camera
         consoleLog('Connecting to camera...');
@@ -155,23 +132,7 @@ export var connectRoutine = function () {
 
         selBaudrate = parseInt(selBaudrate);
 
-        var port = new SerialPort(selCOMport, { baudRate: selBaudrate,
-                                                parser: SerialPort.parsers.byteDelimiter([171,205])}, function (err) {
-            if (err) {
-                return console.log('Error:', err.message);
-            }
-        });
-
-        port.on('data', function (data) {
-            data = toHexString(data);
-            //var buf = new Buffer(data, 'hex');
-            //payload.parse(buf);
-            //console.log(data);
-            var buf = new Buffer('117109a40002041e0000182f010329e68feddb694951', 'hex');
-            console.log(payload.parse(buf));
-
-
-        });
+        SerialInit(/*selBaudrate, selCOMport*/attitude, heading, altimeter);
 
         document.getElementById('connect-btn').src = "assets/unlink.png";
         document.getElementsByClassName('right')[0].className = "lessright";

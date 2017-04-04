@@ -18,6 +18,7 @@ import {    date,
             connectRoutine, 
             consoleSuccess} from './custom_modules/utility';
 import { graphInit, graphAddDatapoint} from './custom_modules/graph'
+import { SerialInit } from './custom_modules/serialpull';
 
 console.log('Loaded environment variables:', env);
 
@@ -34,15 +35,15 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('date').innerHTML = date();
     document.getElementById('time').innerHTML = time();
 
+    var attitude = $.flightIndicator('#attitude', 'attitude', {roll:0, pitch:0, size:325, showBox : true});
+    var heading = $.flightIndicator('#heading', 'heading', {heading:0, showBox:true, size:325});
+    var altimeter = $.flightIndicator('#altimeter', 'altimeter', {size:325, showBox : true});
+
     //listing available serial ports
     listSerialDevices();
 
     //listing available camera devices
     listMediaDevices();
-
-    var attitude = $.flightIndicator('#attitude', 'attitude', {roll:50, pitch:-20, size:325, showBox : true});
-    var heading = $.flightIndicator('#heading', 'heading', {heading:150, showBox:true, size:325});
-    var altimeter = $.flightIndicator('#altimeter', 'altimeter', {size:325, showBox : true});
 
     var increment = 0;
     graphInit();
@@ -56,22 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
         
             if(document.getElementsByClassName('lessright')[0] == null){
                 //connect to the selected devices
-                connectRoutine();
-                // Update at 20Hz
-                var increment = 0;
-                setInterval(function() {
-                    // Attitude update
-                    attitude.setRoll(30*Math.sin(increment/10));
-                    attitude.setPitch(50*Math.sin(increment/20));
-                    
-                    // Heading update
-                    heading.setHeading(increment);
-
-                    // Altimeter update
-                    altimeter.setAltitude(10*increment);
-                    altimeter.setPressure(1000+3*Math.sin(increment/50));
-                    increment++;
-                }, 50);
+                connectRoutine(SerialInit, attitude, heading, altimeter);
             }
             else {
                 //gonna be lazy and reload the page for a disconnect
