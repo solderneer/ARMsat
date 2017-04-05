@@ -9,16 +9,16 @@ import env from './env';
 var SerialPort = require("serialport");
 window.jQuery = window.$ = require('jquery');
 var Chart = require('chart.js')
-import {    date, 
-            time, 
-            consoleLog, 
-            listMediaDevices, 
-            consoleError, 
-            listSerialDevices, 
-            connectRoutine, 
-            consoleSuccess} from './custom_modules/utility';
-import { graphInit, graphAddDatapoint} from './custom_modules/graph'
-import { SerialInit } from './custom_modules/serialpull';
+import {date, 
+        time, 
+        consoleLog, 
+        listMediaDevices, 
+        consoleError, 
+        listSerialDevices, 
+        connectRoutine, 
+        consoleSuccess} from './custom_modules/utility';
+import {graphInit, graphAddDatapoint} from './custom_modules/graph'
+import {SerialInit} from './custom_modules/serialpull';
 
 console.log('Loaded environment variables:', env);
 
