@@ -42,10 +42,10 @@ uint8_t cmdbuf = 0;
 
 uint32_t genericCmd = 0;
 uint32_t newGenericCmd = 0;
-uint32_t panPos = 0;
-uint32_t newPanPos = 0;
-uint32_t tiltPos = 0;
-uint32_t newTiltPos = 0;
+uint32_t panPos = 90;
+uint32_t newPanPos = 90;
+uint32_t tiltPos = 90;
+uint32_t newTiltPos = 90;
 
 uint32_t vref = 1500; //1.2v nominal, temp-dependent
 uint32_t vref_avg = 0;
@@ -77,13 +77,13 @@ int main(void) {
 	MX_USART2_UART_Init();
 	MX_USART6_UART_Init();
 
-	SID_UART_Receive_IT_Setup(&FIO_UART);
+	SID_UART_Receive_IT_Setup(&XBEE_UART);
 	Servo_Init(&htim1, panPos, tiltPos);
 	MPU6050_Init(mpud, MPU6050_Device_0, MPU6050_Accelerometer_2G, MPU6050_Gyroscope_250s, &hi2c1);
 	HAL_ADC_Start_IT(&hadc1);
 	Pressure_Init(&hi2c1);
 	HMC_init(&hi2c1);
-	Xbee_init(&FIO_UART);
+	Xbee_init(&XBEE_UART);
 	CompInit(sxf, 0.05f, 2.0f);
 	CompStart(sxf);
 
@@ -114,6 +114,12 @@ int main(void) {
 			data.hmc_x = (typeof(data.hmc_x)) normHMC.x;
 			data.hmc_y = (typeof(data.hmc_y)) normHMC.y;
 			data.hmc_z = (typeof(data.hmc_z)) normHMC.z;
+			data.dust_conc = (typeof(data.dust_conc)) dust_conc;
+			data.wind_speed = (typeof(data.wind_speed)) wind_speed;
+			data.voltage_cell1 = (typeof(data.voltage_cell1)) voltage_cell1;
+			data.voltage_cell2 = (typeof(data.voltage_cell2)) (voltage_cell2-voltage_cell1);
+			data.voltage_cell3 = (typeof(data.voltage_cell3)) (voltage_cell3-voltage_cell2);
+			data.current = (typeof(data.current)) current;
 			uint8_t buf[sizeof(payload_data_tx)] = {0};
 			encodePayload((uint8_t*)&buf, &data);
 			Xbee_sendPayload((uint8_t*)&buf, sizeof(data));
@@ -121,8 +127,8 @@ int main(void) {
 		if(currTick - sensorTick > 50) {
 			sensorTick = currTick;
 			uint8_t tmp_data[2] = {0};
-			HAL_I2C_Master_Transmit(&hi2c1, TMP102_I2C_ADDRESS, (uint8_t*)&tmp_data, 1, 1000);
-			HAL_I2C_Master_Receive(&hi2c1, TMP102_I2C_ADDRESS, (uint8_t*)&tmp_data, 2, 1000);
+			HAL_I2C_Master_Transmit(&hi2c1, TMP102_I2C_ADDRESS, (uint8_t*)&tmp_data, 1, 0xffff);
+			HAL_I2C_Master_Receive(&hi2c1, TMP102_I2C_ADDRESS, (uint8_t*)&tmp_data, 2, 0xffff);
 			int16_t val = 0;
 			val = tmp_data[0]<<4;
 			val |= tmp_data[1]>>4;
@@ -164,7 +170,7 @@ int main(void) {
 					((uint16_t)current>>8),
 					((uint16_t)current&0xff),
 					0x55};
-			HAL_UART_Transmit(&XBEE_UART, data, sizeof(data), 1000);
+			HAL_UART_Transmit(&FIO_UART, data, sizeof(data), 1000);
 		}
 		if(genericCmd != newGenericCmd) {
 			switch(genericCmd) {
@@ -184,12 +190,15 @@ int main(void) {
 		if(adc_available) {
 			adc_available = 0;
 			uint32_t val = HAL_ADC_GetValue(&hadc1);
+			float volts = (float)val;
+			volts /= (float)vref;
+			volts *= 1.2f;
 			switch(adc_chan) {
 			case ADC_CHANNEL_VREFINT:
 				vref_avg += val;
 				if(++vref_i>=1024) {
 					vref = vref_avg>>10;
-					voltage_cell1 = vref;
+					voltage_cell1 = (uint32_t)((vref/vref)*1200);
 					vref_avg = 0;
 					vref_i = 0;
 				}
@@ -202,6 +211,8 @@ int main(void) {
 				adc_chan = ADC_CHANNEL_4;
 				break;
 			case ADC_CHANNEL_4:
+				volts *= 2000.0f;
+				voltage_cell1 = (uint32_t)volts;
 				adc_chan = ADC_CHANNEL_6;
 				break;
 			case ADC_CHANNEL_6:
@@ -211,16 +222,29 @@ int main(void) {
 				adc_chan = ADC_CHANNEL_8;
 				break;
 			case ADC_CHANNEL_8:
+				volts *= 5700.0f;
+				voltage_cell2 = (uint32_t)volts;
 				adc_chan = ADC_CHANNEL_9;
 				break;
 			case ADC_CHANNEL_9:
 				adc_chan = ADC_HUMIDITY_CHAN;
 				break;
-			case ADC_HUMIDITY_CHAN:
-				humidity = val;
+			case ADC_HUMIDITY_CHAN: {
+				float v = (float)val;
+				v /= (float)vref;
+				v *= 1.2f;
+				v /= 2.5f;
+				v -= 0.16f;
+				v /= 0.0062f;
+				v /= (float)(1.0546f - 0.0000216f*temperature);
+				humidity = (int)(v*100);
+				if(v < 0) humidity = 0;
 				adc_chan = ADC_CHANNEL_11;
 				break;
+			}
 			case ADC_CHANNEL_11:
+				volts *= 5700.0f;
+				voltage_cell3 = (uint32_t)volts;
 				adc_chan = ADC_CHANNEL_14;
 				break;
 			case ADC_CHANNEL_14:

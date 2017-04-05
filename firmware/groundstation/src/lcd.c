@@ -89,6 +89,16 @@ void LCD_refreshFrame(void) {
 	switch(lcdFrame) {
 	case 0:
 		LCD_setCursor(0,0);
+		LCD_print("Humidity:");
+		LCD_setCursor(1,0);
+		LCD_print("Temp:");
+		LCD_setCursor(2,0);
+		LCD_print("Pressure:");
+		LCD_setCursor(3,0);
+		LCD_print("Altitude:");
+		break;
+	case 1:
+		LCD_setCursor(0,0);
 		LCD_print("Mag X:");
 		LCD_setCursor(1,0);
 		LCD_print("Mag Y:");
@@ -96,6 +106,16 @@ void LCD_refreshFrame(void) {
 		LCD_print("Mag Z:");
 		LCD_setCursor(3,0);
 		LCD_print("Heading:");
+		break;
+	case 2:
+		LCD_setCursor(0,0);
+		LCD_print("Vcell1:");
+		LCD_setCursor(1,0);
+		LCD_print("Vcell2:");
+		LCD_setCursor(2,0);
+		LCD_print("Vcell3:");
+		LCD_setCursor(3,0);
+		LCD_print("Current:");
 		break;
 	default:
 		LCD_setCursor(0,0);

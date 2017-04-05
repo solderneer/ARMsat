@@ -24,6 +24,6 @@ int mapi(int x, int in_min, int in_max, int out_min, int out_max) {
 
 void Servo_write(uint32_t Channel, uint32_t pos) {
 	//assert(Channel == SERVO_PAN_CHAN || Channel == SERVO_TILT_CHAN);
-	int pwm = mapi(pos, 0, 179, 1751, 8079);
+	int pwm = mapi(pos, 0, 180, 1760, 8060);
 	__HAL_TIM_SetCompare(htim, Channel, pwm);
 }
