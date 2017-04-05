@@ -58,6 +58,9 @@ uint32_t current = 0;
 uint32_t dust_conc = 0;
 uint32_t wind_speed = 0;
 
+float RV_Wind_Volts;
+float zeroWind_volts;
+
 MPU6050_t* mpud = {0};
 SixAxis* sxf = {0};
 
@@ -194,23 +197,31 @@ int main(void) {
 			volts /= (float)vref;
 			volts *= 1.2f;
 			switch(adc_chan) {
-			case ADC_CHANNEL_VREFINT:
+			case ADC_CHANNEL_VREFINT: //Vref 1.2v
 				vref_avg += val;
 				if(++vref_i>=1024) {
 					vref = vref_avg>>10;
-					voltage_cell1 = (uint32_t)((vref/vref)*1200);
 					vref_avg = 0;
 					vref_i = 0;
 				}
 				adc_chan = ADC_CHANNEL_0;
 				break;
-			case ADC_CHANNEL_0:
+			case ADC_CHANNEL_0: //wind TMP
+				val >>= 1;
+				float v1 = (float)val;
+				v1 = -0.0006*(v1 * v1) + 1.0727f * v1 + 47.172f;
+				v1 *= 0.0048828125f;
+				zeroWind_volts = v1 + 0.2f;
 				adc_chan = ADC_CHANNEL_1;
 				break;
-			case ADC_CHANNEL_1:
+			case ADC_CHANNEL_1: //wind RV
+				val >>= 1;
+				float v2 = (float)val;
+				RV_Wind_Volts = (float)(v2 * 0.0048828125f);
+				wind_speed =  (uint32_t)(pow(((RV_Wind_Volts - zeroWind_volts) /.2300) , 2.7265) * 100);
 				adc_chan = ADC_CHANNEL_4;
 				break;
-			case ADC_CHANNEL_4:
+			case ADC_CHANNEL_4: //1 cell
 				volts *= 2000.0f;
 				voltage_cell1 = (uint32_t)volts;
 				adc_chan = ADC_CHANNEL_6;
@@ -221,7 +232,7 @@ int main(void) {
 			case ADC_CHANNEL_7:
 				adc_chan = ADC_CHANNEL_8;
 				break;
-			case ADC_CHANNEL_8:
+			case ADC_CHANNEL_8: //2 cells
 				volts *= 5700.0f;
 				voltage_cell2 = (uint32_t)volts;
 				adc_chan = ADC_CHANNEL_9;
@@ -229,7 +240,7 @@ int main(void) {
 			case ADC_CHANNEL_9:
 				adc_chan = ADC_HUMIDITY_CHAN;
 				break;
-			case ADC_HUMIDITY_CHAN: {
+			case ADC_HUMIDITY_CHAN: { //Humidity
 				float v = (float)val;
 				v /= (float)vref;
 				v *= 1.2f;
@@ -242,7 +253,7 @@ int main(void) {
 				adc_chan = ADC_CHANNEL_11;
 				break;
 			}
-			case ADC_CHANNEL_11:
+			case ADC_CHANNEL_11: //3 cells
 				volts *= 5700.0f;
 				voltage_cell3 = (uint32_t)volts;
 				adc_chan = ADC_CHANNEL_14;
