@@ -54,12 +54,18 @@ uint32_t vref_i = 0;
 uint32_t voltage_cell1 = 0;
 uint32_t voltage_cell2 = 0;
 uint32_t voltage_cell3 = 0;
+
 uint32_t current = 0;
 uint32_t dust_conc = 0;
 uint32_t wind_speed = 0;
 
 float RV_Wind_Volts;
 float zeroWind_volts;
+
+float dust_concf = 0;
+uint32_t dust_conc1 = 0;
+uint32_t dust_conc2 = 0;
+uint32_t dust_conc3 = 0;
 
 MPU6050_t* mpud = {0};
 SixAxis* sxf = {0};
@@ -79,6 +85,9 @@ int main(void) {
 	MX_TIM2_Init();
 	MX_USART2_UART_Init();
 	MX_USART6_UART_Init();
+
+	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+	__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_1, 0xF7CF);
 
 	SID_UART_Receive_IT_Setup(&XBEE_UART);
 	Servo_Init(&htim1, panPos, tiltPos);
@@ -109,6 +118,7 @@ int main(void) {
 		}
 		if(currTick - xbeeTick > 100) {
 			xbeeTick = currTick;
+			dust_conc1 = 0;
 			payload_data_tx data;
 			data.temperature = (typeof(data.temperature)) temperature;
 			data.pressure = (typeof(data.pressure)) pressure;
@@ -120,8 +130,8 @@ int main(void) {
 			data.dust_conc = (typeof(data.dust_conc)) dust_conc;
 			data.wind_speed = (typeof(data.wind_speed)) wind_speed;
 			data.voltage_cell1 = (typeof(data.voltage_cell1)) voltage_cell1;
-			data.voltage_cell2 = (typeof(data.voltage_cell2)) (voltage_cell2-voltage_cell1);
-			data.voltage_cell3 = (typeof(data.voltage_cell3)) (voltage_cell3-voltage_cell2);
+			data.voltage_cell2 = (typeof(data.voltage_cell2)) voltage_cell2;
+			data.voltage_cell3 = (typeof(data.voltage_cell3)) voltage_cell3;
 			data.current = (typeof(data.current)) current;
 			uint8_t buf[sizeof(payload_data_tx)] = {0};
 			encodePayload((uint8_t*)&buf, &data);
@@ -211,7 +221,7 @@ int main(void) {
 				float v1 = (float)val;
 				v1 = -0.0006*(v1 * v1) + 1.0727f * v1 + 47.172f;
 				v1 *= 0.0048828125f;
-				zeroWind_volts = v1 + 0.2f;
+				zeroWind_volts = v1 + 1.2f;
 				adc_chan = ADC_CHANNEL_1;
 				break;
 			case ADC_CHANNEL_1: //wind RV
@@ -235,6 +245,7 @@ int main(void) {
 			case ADC_CHANNEL_8: //2 cells
 				volts *= 5700.0f;
 				voltage_cell2 = (uint32_t)volts;
+				voltage_cell2 -= voltage_cell1;
 				adc_chan = ADC_CHANNEL_9;
 				break;
 			case ADC_CHANNEL_9:
@@ -256,9 +267,20 @@ int main(void) {
 			case ADC_CHANNEL_11: //3 cells
 				volts *= 5700.0f;
 				voltage_cell3 = (uint32_t)volts;
+				voltage_cell3 = voltage_cell3 - voltage_cell2 - voltage_cell1;
 				adc_chan = ADC_CHANNEL_14;
 				break;
 			case ADC_CHANNEL_14:
+				if(val >= dust_conc1) {
+					dust_conc1 = val;
+					dust_concf = (float)dust_conc1;
+					dust_concf /= (float)vref;
+					dust_concf *= 2.400;
+					dust_concf /= 6.75f;
+					dust_concf -= 0.05f;
+					dust_concf *= 10;
+					dust_conc = (uint32_t)dust_concf;
+				}
 				adc_chan = ADC_CHANNEL_15;
 				break;
 			default:
