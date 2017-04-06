@@ -18,7 +18,9 @@ import {date,
         connectRoutine, 
         consoleSuccess} from './custom_modules/utility';
 import {graphInit, graphAddDatapoint} from './custom_modules/graph'
-import {SerialInit} from './custom_modules/serialpull';
+import {SerialInit, getDataPoint} from './custom_modules/serialpull';
+var JsonDB = require('node-json-db');
+var db = new JsonDB ("datapoints", true, true);
 
 console.log('Loaded environment variables:', env);
 
@@ -78,6 +80,25 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
 
                 }
+
+                document.getElementById("logging").addEventListener('click', function (e) {
+                    var i = 0;
+                    if(document.getElementById("logging").innerText == "Start Logging"){
+                        document.getElementById("logging").innerText = "Stop Logging";
+                        document.getElementById("logging").className = "btn btn-danger button-style";
+                        window.logger = setInterval(function () {
+                                    console.log(i);
+                                    db.push(("/datapoint" + i), getDataPoint(), false);
+                                    i++;
+                                }, 500);
+                    }
+                    else if(document.getElementById("logging").innerText == "Stop Logging"){
+                        console.log("Triggered");
+                        document.getElementById("logging").innerText = "Start Logging";
+                        document.getElementById("logging").className = "btn btn-success button-style";
+                        clearInterval(window.logger);
+                    }
+                });
             }
             else {
                 //gonna be lazy and reload the page for a disconnect

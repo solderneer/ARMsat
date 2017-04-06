@@ -2,9 +2,6 @@ var SerialPort = require("serialport");
 var jquery = require('jquery');
 var Parser = require('binary-parser').Parser;
 window.jQuery = window.$ = require('jquery');
-var JsonDB = require('node-json-db');
-
-var db = new JsonDB ("datapoints", true, true);
 
 var currentDataPoint;
 
@@ -50,13 +47,10 @@ export var SerialInit = function (selBaudrate, selCOMPort, attitude, heading, al
 
     var buf = new Buffer('117109a40002041e0000182f010329e68feddb694951000055abcd', 'hex');
 
-    var i = 0;
     setInterval(function(){
         console.log(payload.parse(buf));
         currentDataPoint = payload.parse(buf);
         tableUpdate(attitude, heading, altimeter);
-        db.push(("/datapoint" + i), currentDataPoint, false);
-        i++;
     }, 500);
 
     var port = 1;
