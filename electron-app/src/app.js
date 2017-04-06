@@ -20,7 +20,6 @@ import {date,
 import {graphInit, graphAddDatapoint} from './custom_modules/graph'
 import {SerialInit, getDataPoint} from './custom_modules/serialpull';
 var JsonDB = require('node-json-db');
-var db = new JsonDB ("datapoints", true, true);
 
 console.log('Loaded environment variables:', env);
 
@@ -84,6 +83,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById("logging").addEventListener('click', function (e) {
                     var i = 0;
                     if(document.getElementById("logging").innerText == "Start Logging"){
+                        var input = document.getElementById("file-location").value;
+                        var db = new JsonDB (input, true, true);
                         document.getElementById("logging").innerText = "Stop Logging";
                         document.getElementById("logging").className = "btn btn-danger button-style";
                         window.logger = setInterval(function () {

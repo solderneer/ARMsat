@@ -199,37 +199,37 @@
                 </div>
                 <row>
                     <div class="panel panel-default cramp batt">
-                            <div class="panel-heading">
-                                <h3 class="panel-title ">Datalogger</h3>
-                            </div>
-                            <div class="panel-body">
-                                <div class="input-group">
-                                    <span class="input-group-addon" id="basic-addon1">File location</span>
-                                    <input type="text" class="form-control" placeholder="Enter the log file output location" aria-describedby="basic-addon1">
-                                </div>
-                                <div class="btn-group button-style">
-                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Output format <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="#">CSV</a></li>
-                                        <li><a href="#">JSON</a></li>
-                                        <li><a href="#">Cloud database</a></li>
-                                    </ul>
-                                </div>
-                                <button type="button" class="btn btn-success button-style" id="logging">Start Logging</button>
-                            </div>
+                        <div class="panel-heading">
+                            <h3 class="panel-title ">Datalogger</h3>
                         </div>
+                        <div class="panel-body">
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1">File location</span>
+                                <input type="text" class="form-control" placeholder="Enter the log file output location" aria-describedby="basic-addon1" id="file-location" value="C:\\Users\\s_sud\\database">
+                            </div>
+                            <div class="btn-group button-style">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Output format <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">CSV</a></li>
+                                    <li><a href="#">JSON</a></li>
+                                    <li><a href="#">Cloud database</a></li>
+                                </ul>
+                            </div>
+                            <button type="button" class="btn btn-success button-style" id="logging">Start Logging</button>
+                        </div>
+                    </div>
                 </row>
             </div>
             <div id="Graphing" hidden>
                 <div class="row">
                     <div class="absolute">
-                       <div class="dropdown">
-                            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Pressure
+                       <div class="dropdown dropdown-graph">
+                            <button class="btn btn-default dropdown-toggle btnStatus" type="button" data-toggle="dropdown">Pressure
                             <span class="caret"></span></button>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">Pressure</a></li>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                 <li><a href="#">Pressure</a></li>
                                 <li><a href="#">Temperature</a></li>
                                 <li><a href="#">Humidity</a></li>
                                 <li><a href="#">Altitude</a></li>

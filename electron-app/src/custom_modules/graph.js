@@ -1,9 +1,12 @@
-var Chart = require('chart.js')
+var Chart = require('chart.js');
+window.jQuery = window.$ = require('jquery');
 
 var Chart1;
 var Chart2;
 var chart1Label = 0;
 var chart2Label = 0;
+
+var currentPlot = "Pressure";
 
 export var graphInit = function () {
     var ctx = document.getElementById("Graph1");
@@ -39,6 +42,13 @@ export var graphInit = function () {
         data: data,
         options: {animationSteps: 15, scales:{xAxes: [{display: false}]}, tooltips: {enabled: false}}
     });
+
+    $('.dropdown-graph li > a').click(function (e){
+        $('.btnStatus').html(this.innerHTML+' <span class="caret"></span>');
+        currentPlot = this.innerHTML;
+        Chart1.data.datasets[0].label = this.innerHTML;
+    });
+
 };
 
 export var graphAddDatapoint = function (data){
@@ -54,6 +64,3 @@ export var graphAddDatapoint = function (data){
     Chart1.update();
 };
 
-export var graphChangeDataType = function() {
-
-};

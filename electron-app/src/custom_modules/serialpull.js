@@ -48,7 +48,7 @@ export var SerialInit = function (selBaudrate, selCOMPort, attitude, heading, al
     var buf = new Buffer('117109a40002041e0000182f010329e68feddb694951000055abcd', 'hex');
 
     setInterval(function(){
-        console.log(payload.parse(buf));
+        //console.log(payload.parse(buf));
         currentDataPoint = payload.parse(buf);
         tableUpdate(attitude, heading, altimeter);
     }, 500);
