@@ -57,7 +57,27 @@ document.addEventListener('DOMContentLoaded', function () {
         
             if(document.getElementsByClassName('lessright')[0] == null){
                 //connect to the selected devices
-                connectRoutine(SerialInit, attitude, heading, altimeter);
+                var port = connectRoutine(SerialInit, attitude, heading, altimeter);
+                document.onkeydown = checkKey;
+
+                function checkKey(e) {
+
+                    e = e || window.event;
+
+                    if (e.keyCode == '38') {
+                        console.log('up');
+                    }
+                    else if (e.keyCode == '40') {
+                        console.log('down');
+                    }
+                    else if (e.keyCode == '37') {
+                        console.log('left');
+                    }
+                    else if (e.keyCode == '39') {
+                        console.log('right');
+                    }
+
+                }
             }
             else {
                 //gonna be lazy and reload the page for a disconnect

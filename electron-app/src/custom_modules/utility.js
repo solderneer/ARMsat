@@ -132,7 +132,7 @@ export var connectRoutine = function (SerialInit, attitude, heading, altimeter) 
 
         selBaudrate = parseInt(selBaudrate);
 
-        SerialInit(/*selBaudrate, selCOMport*/attitude, heading, altimeter);
+        var port = SerialInit(selBaudrate, selCOMport, attitude, heading, altimeter);
 
         document.getElementById('connect-btn').src = "assets/unlink.png";
         document.getElementsByClassName('right')[0].className = "lessright";
@@ -142,6 +142,8 @@ export var connectRoutine = function (SerialInit, attitude, heading, altimeter) 
         tabSwitch("telemetry");
         tabSwitch("graphing");
         tabSwitch("settings");
+
+        return port;
 }
 
 
