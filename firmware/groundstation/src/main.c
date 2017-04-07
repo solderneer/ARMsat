@@ -55,6 +55,7 @@ uint32_t sensorTick = 0;
 uint32_t reInitTick = 0;
 uint32_t pcWriteTick = 0;
 uint32_t secondTick = 0;
+uint32_t xbeeTick = 0;
 
 int humidity = 0;
 int temperature = 0;
@@ -68,12 +69,12 @@ uint32_t vref = 1500; //1.2v nominal, temp-dependent
 uint32_t vref_avg = 0;
 uint32_t vref_i = 0;
 
-int32_t joystick_x;
-int32_t joystick_x_avg = 0;
+uint32_t joystick_x = 0;
+uint32_t joystick_x_avg = 0;
 uint32_t joystick_x_i = 0;
 
-int32_t joystick_y;
-int32_t joystick_y_avg = 0;
+uint32_t joystick_y = 0;
+uint32_t joystick_y_avg = 0;
 uint32_t joystick_y_i = 0;
 
 GPIO_PinState joystick_btn;
@@ -83,6 +84,13 @@ uint32_t voltage_cell2 = 0;
 uint32_t voltage_cell3 = 0;
 uint32_t current = 0;
 uint32_t dust_conc = 0;
+uint32_t wind_speed = 0;
+
+uint32_t analogControl = 1;
+
+int mapi2(int x, int in_min, int in_max, int out_min, int out_max) {
+	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
 
 int main(void)
 {
@@ -96,13 +104,14 @@ int main(void)
 	MX_USART2_UART_Init();
 	MX_USART6_UART_Init();
 	MX_CRC_Init();
+	HAL_ADC_Start_IT(&hadc1);
 	SID_UART_Receive_IT_Setup(&XBEE_UART);
 	SID_UART_Receive_IT_Setup(&PC_UART);
 	Xbee_init(&XBEE_UART);
-	LCD_init(&hi2c1);
 	Pressure_Init(&hi2c1);
 
-	HAL_Delay(500); //for lcd
+	HAL_Delay(1000); //for lcd
+	LCD_init(&hi2c1);
 
 	currTick = HAL_GetTick();
 	lcdTick = currTick;
@@ -129,21 +138,142 @@ int main(void)
 		}
 		if(currTick - sensorTick > 50) {
 			sensorTick = currTick;
-			Pressure_get();
+			//Pressure_get();
 			HMC_calculate();
 			newKey = LCD_keypad();
 			if(newKey != lcdKey) {
 				switch(newKey) {
 					case '1':
-						HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+						if(lcdFrame != 0) {
+							lcdFrame = 0;
+							LCD_refreshFrame();
+						}
+						break;
+					case '2':
+						if(lcdFrame != 1) {
+							lcdFrame = 1;
+							LCD_refreshFrame();
+						}
+						break;
+					case '3':
+						if(lcdFrame != 2) {
+							lcdFrame = 2;
+							LCD_refreshFrame();
+						}
+						break;
+					case '#':
+						analogControl = !analogControl;
+						if(analogControl == 0) {
+							joystick_x = 2048;
+							joystick_y = 2048;
+						}
+						break;
+					case '7': //right
+						if(joystick_x<3845) joystick_x += 250;
+						break;
+					case '8': //left
+						if(joystick_x>249) joystick_x -= 250;
+						break;
+					case '*': //up
+						if(joystick_y<3845) joystick_y += 250;
+						break;
+					case '0': //down
+						if(joystick_y>249) joystick_y -= 250;
 						break;
 				}
 				lcdKey = newKey;
 			}
 		}
-		if(currTick - pcWriteTick > 1000) {
+		if(currTick - lcdTick > 500) {
+			lcdTick = currTick;
+			uint8_t buf[10] = {0};
+			switch(lcdFrame) {
+			default:
+			case 0:
+				LCD_setCursor(0,10);
+				sprintf(&buf, "%u.%02u%%  ", humidity/100, humidity%100);
+				LCD_print(&buf);
+				LCD_setCursor(0,19);
+				LCD_command(humidity<5000?128:129);
+
+				LCD_setCursor(1,10);
+				sprintf(&buf, "%d.%02uC  ", temperature/100, temperature%100);
+				LCD_print(&buf);
+				LCD_setCursor(1,19);
+				LCD_command(temperature<2500?128:129);
+
+				LCD_setCursor(2,10);
+				sprintf(&buf, "%uPa  ", pressure);
+				LCD_print(&buf);
+				LCD_setCursor(2,19);
+				LCD_command(131);
+
+				LCD_setCursor(3,10);
+				sprintf(&buf, "%um  ", altitude);
+				LCD_print(&buf);
+				LCD_setCursor(3,19);
+				LCD_command(130);
+				break;
+			case 1: {
+				int x = (int)(normHMC.x*100);
+				int y = (int)(normHMC.y*100);
+				int z = (int)(normHMC.z*100);
+
+				int x_abs = x>0 ? x : -x;
+				int y_abs = y>0 ? y : -y;
+				int z_abs = z>0 ? z : -z;
+
+				LCD_setCursor(0,10);
+				sprintf(&buf, "%d.%02u", x/100,x_abs%100);
+				LCD_print(&buf);
+				LCD_setCursor(0,19);
+
+				LCD_setCursor(1,10);
+				sprintf(&buf, "%d.%02u", y/100,y_abs%100);
+				LCD_print(&buf);
+				LCD_setCursor(1,19);
+
+				LCD_setCursor(2,10);
+				sprintf(&buf, "%d.%02u", z/100,z_abs%100);
+				LCD_print(&buf);
+				LCD_setCursor(2,19);
+
+				LCD_setCursor(3,10);
+				sprintf(&buf, "%u deg  ", smoothHeadingDegrees);
+				LCD_print(&buf);
+				LCD_setCursor(3,19);
+				break;
+			}
+			case 2:
+				LCD_setCursor(0,10);
+				sprintf(&buf, "%u.%03u%V  ", voltage_cell1/1000, voltage_cell1%1000);
+				LCD_print(&buf);
+				LCD_setCursor(0,19);
+				LCD_command(voltage_cell1>3600?128:129);
+
+				LCD_setCursor(1,10);
+				sprintf(&buf, "%d.%03uV  ", voltage_cell2/1000, voltage_cell2%1000);
+				LCD_print(&buf);
+				LCD_setCursor(1,19);
+				LCD_command(voltage_cell2>3600?128:129);
+
+				LCD_setCursor(2,10);
+				sprintf(&buf, "%d.%03uV  ", voltage_cell3/1000, voltage_cell3%1000);
+				LCD_print(&buf);
+				LCD_setCursor(2,19);
+				LCD_command(voltage_cell3>3600?128:129);
+
+				LCD_setCursor(3,10);
+				sprintf(&buf, "%umA  ", current);
+				LCD_print(&buf);
+				LCD_setCursor(3,19);
+				LCD_command(voltage_cell3<1000?128:129);
+				break;
+			}
+		}
+		if(currTick - pcWriteTick > 100) {
 			pcWriteTick = currTick;
-			uint8_t data[25] = {0xab,0xcd,
+			uint8_t data[27] = {0xab,0xcd,
 					((uint16_t)humidity)>>8,
 					((uint16_t)humidity&0xff),
 					((uint16_t)temperature>>8),
@@ -154,10 +284,12 @@ int main(void)
 					((uint32_t)pressure)&0xff,
 					(uint16_t)altitude>>8,
 					(uint16_t)altitude&0xff,
-					(uint16_t)dust_conc>>8,
-					(uint16_t)dust_conc&0xff,
 					(uint16_t)smoothHeadingDegrees>>8,
 					(uint16_t)smoothHeadingDegrees&0xff,
+					(uint16_t)dust_conc>>8,
+					(uint16_t)dust_conc&0xff,
+					(uint16_t)wind_speed>>8,
+					(uint16_t)wind_speed&0xff,
 					((uint16_t)voltage_cell1>>8),
 					((uint16_t)voltage_cell1&0xff),
 					((uint16_t)voltage_cell2>>8),
@@ -185,8 +317,8 @@ int main(void)
 				break;
 			case ADC_JOYSTICK_X_CHAN:
 				joystick_x_avg += val;
-				if(++joystick_x_i>=16) {
-					joystick_x = joystick_x_avg>>4;
+				if(++joystick_x_i>=1024) {
+					if(analogControl) joystick_x = joystick_x_avg>>10;
 					joystick_x_avg = 0;
 					joystick_x_i = 0;
 				}
@@ -194,8 +326,8 @@ int main(void)
 				break;
 			case ADC_JOYSTICK_Y_CHAN:
 				joystick_y_avg += val;
-				if(++joystick_y_i>=16) {
-					joystick_y = joystick_y_avg>>4;
+				if(++joystick_y_i>=1024) {
+					if(analogControl) joystick_y = joystick_y_avg>>10;
 					joystick_y_avg = 0;
 					joystick_y_i = 0;
 				}
@@ -218,28 +350,39 @@ int main(void)
 			if(xrx_read(&payload, &length) == 0) decodePayload(payload, length);
 			free(payload);
 		}
-		if(pcrx_available && pcrx_read(&cmdbuf) == 0) switch(cmdbuf) {
-			default:
-				HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-				break;
-			case 'l':
-				HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-				break;
-			case 'r':
-				NVIC_SystemReset();
-				break;
-			case 28: //left
-				joystick_x -= 10;
-				break;
-			case 29: //right
-				joystick_x += 10;
-				break;
-			case 30: //up
-				joystick_y += 10;
-				break;
-			case 31: //down
-				joystick_y -= 10;
-				break;
+		if(pcrx_available && pcrx_read(&cmdbuf) == 0) {
+			switch(cmdbuf) {
+				default:
+					HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+					break;
+				case 'l':
+					HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+					break;
+				case 'r':
+					NVIC_SystemReset();
+					break;
+				case '1': //left
+					if(joystick_x>9) joystick_x -= 10;
+					break;
+				case '2': //right
+					if(joystick_x<171) joystick_x += 10;
+					break;
+				case '3': //up
+					if(joystick_y<171) joystick_y += 10;
+					break;
+				case '4': //down
+					if(joystick_y>9) joystick_y -= 10;
+					break;
+			}
+		}
+		if(currTick - xbeeTick > 100) {
+			xbeeTick = currTick;
+			payload_data_tx data;
+			data.pan_pos = (typeof(data.pan_pos)) mapi2(joystick_x, 0, 4095, 10, 170);
+			data.tilt_pos = (typeof(data.tilt_pos)) mapi2(joystick_y, 0, 4095, 10, 170);
+			uint8_t buf[sizeof(payload_data_tx)] = {0};
+			encodePayload((uint8_t*)&buf, &data);
+			Xbee_sendPayload((uint8_t*)&buf, sizeof(data));
 		}
 	}
 }
@@ -253,6 +396,7 @@ void decodePayload_callback(payload_data_rx* p) {
 	normHMC.y = (typeof(normHMC.y))p->hmc_y;
 	normHMC.z = (typeof(normHMC.z))p->hmc_z;
 	dust_conc = (typeof(dust_conc))p->dust_conc;
+	wind_speed = (typeof(wind_speed))p->wind_speed;
 	voltage_cell1 = (typeof(voltage_cell1))p->voltage_cell1;
 	voltage_cell2 = (typeof(voltage_cell2))p->voltage_cell2;
 	voltage_cell3 = (typeof(voltage_cell3))p->voltage_cell3;

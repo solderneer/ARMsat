@@ -18,20 +18,21 @@ uint16_t voltage_cell2;
 uint16_t voltage_cell3;
 uint16_t current;
 
+void(* resetFunc) (void) = 0;
+
 void setup() {
 	pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(11, INPUT);
 	digitalWrite(LED_BUILTIN, LOW); 
 	Serial1.begin(57600);
-	while(!SD.begin(chipSelect)) {
+	while(digitalRead(11) != LOW || !SD.begin(chipSelect)) {
 		;
 	}
-	File dataFile = SD.open("data.csv", FILE_WRITE);
-	dataFile.println("\"Humidity (%RH)\",\"Temperature (deg C)\",\"Pressure (Pa)\",\"Altitude (m)\",\"Heading (deg)\",\"Wind speed (Km/h)\",\"Dust concentration (%)\",\"Vcell 1 (V)\",\"Vcell 2 (V)\",\"Vcell3 (V)\",\"Current (mA)\"");
-	dataFile.close();
 	digitalWrite(LED_BUILTIN, HIGH);
 }
 
 void loop() {
+  if(digitalRead(11) != LOW) resetFunc();
 	if (Serial1.available()) {
 		cmdbuf = Serial1.read();
 		switch(rx_i) {
@@ -162,7 +163,9 @@ void loop() {
 		File dataFile = SD.open("data.csv", FILE_WRITE);
 		dataFile.print(humidity, DEC);
 		dataFile.print(',');
-		dataFile.print(temperature, DEC);
+		dataFile.print(temperature/100, DEC);
+    dataFile.print('.');
+    dataFile.print(temperature%100, DEC);
 		dataFile.print(',');
 		dataFile.print(pressure, DEC);
 		dataFile.print(',');
