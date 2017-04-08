@@ -20,6 +20,7 @@ import {date,
 import {graphInit, graphAddDatapoint} from './custom_modules/graph'
 import {SerialInit, getDataPoint} from './custom_modules/serialpull';
 var JsonDB = require('node-json-db');
+const CsvDb = require('csv-db');
 
 console.log('Loaded environment variables:', env);
 
@@ -79,25 +80,74 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
 
                 }
+                
+                var currentDataType;
+                //datalogger things
+                 $('.dropdown-data li > a').click(function (e){
+                    $('.dropdown-status').html(this.innerHTML+' <span class="caret"></span>');
+                    currentDataType = this.innerHTML;
+                    console.log(currentDataType);
+                });
 
                 document.getElementById("logging").addEventListener('click', function (e) {
                     var i = 0;
                     if(document.getElementById("logging").innerText == "Start Logging"){
                         var input = document.getElementById("file-location").value;
-                        var db = new JsonDB (input, true, true);
-                        document.getElementById("logging").innerText = "Stop Logging";
-                        document.getElementById("logging").className = "btn btn-danger button-style";
-                        window.logger = setInterval(function () {
-                                    console.log(i);
-                                    db.push(("/datapoint" + i), getDataPoint(), false);
-                                    i++;
-                                }, 500);
+                        consoleLog("Datalogger starting");
+
+                        if(currentDataType == "JSON"){
+                            var db = new JsonDB (input, true, true);
+                            document.getElementById("logging").innerText = "Stop Logging";
+                            document.getElementById("logging").className = "btn btn-danger button-style";
+                            window.logger = setInterval(function () {
+                                        console.log(i);
+                                        db.push(("/datapoint" + i), getDataPoint(), false);
+                                        i++;
+                                    }, 500);
+                            consoleSuccess("Datalogger successfully started (Format: JSON)");
+                        }
+
+                        else if(currentDataType == "CSV"){
+                            /*
+                            const csvDb = new CsvDb(input, ['altitude', 
+                                                            'current', 
+                                                            'dustconc', 
+                                                            'endbyte', 
+                                                            'heading', 
+                                                            'pressure', 
+                                                            'startbyte1', 
+                                                            'startbyte2', 
+                                                            'temperature', 
+                                                            'voltage_cell1', 
+                                                            'voltage_cell2', 
+                                                            'voltage_cell3', 
+                                                            'windspeed']);
+
+                            window.logger = setInterval(function () {
+                                console.log(i);
+                                csvDb.insert(getDataPoint()).then((data) => {
+                                    //console.log(data);
+                                    }, (err) => {
+                                    console.log(err);
+                                });
+                                i++;
+                            }, 500);*/
+                            consoleError("Feature not enabled yet");
+                        }
+
+                        else if(currentDataType == "Cloud database"){
+                            consoleError("Feature not enabled yet");
+                        }
+                        else {
+                            consoleError("No format selected");
+                        }
                     }
                     else if(document.getElementById("logging").innerText == "Stop Logging"){
-                        console.log("Triggered");
+                        consoleLog("Stopping datalogger");
                         document.getElementById("logging").innerText = "Start Logging";
                         document.getElementById("logging").className = "btn btn-success button-style";
                         clearInterval(window.logger);
+                        consoleSuccess("Stopped daatalogger")
                     }
                 });
             }
