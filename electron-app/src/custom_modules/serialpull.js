@@ -10,7 +10,7 @@ var payload = new Parser()
     .uint16('humidity')
     .uint16('temperature')
     .uint32('pressure')
-    .uint16('altitude')
+    .int16('altitude')
     .uint16('heading')
     .uint16('dustconc')
     .uint16('windspeed')
@@ -30,7 +30,7 @@ function toHexString(byteArray) {
 
 
 export var SerialInit = function (selBaudrate, selCOMPort, attitude, heading, altimeter){
-    /*var port = new SerialPort(selCOMPort, { baudRate: selBaudrate, parser: SerialPort.parsers.byteDelimiter([171,205])}, function (err) {
+    var port = new SerialPort(selCOMPort, { baudRate: selBaudrate, parser: SerialPort.parsers.byteDelimiter([171,205])}, function (err) {
         if (err) {
             return console.log('Error:', err.message);
         }
@@ -42,18 +42,15 @@ export var SerialInit = function (selBaudrate, selCOMPort, attitude, heading, al
         var buf = new Buffer(data, 'hex');
         console.log(payload.parse(buf));
         currentDataPoint = payload.parse(buf);
+        currentDataPoint.voltage_cell1 = currentDataPoint.voltage_cell1/1000;
+        currentDataPoint.voltage_cell2 = currentDataPoint.voltage_cell2/1000;
+        currentDataPoint.voltage_cell3 = currentDataPoint.voltage_cell3/1000;
+        currentDataPoint.temperature = currentDataPoint.temperature/100;
+        currentDataPoint.humidity = currentDataPoint.humidity/100;
+        currentDataPoint.dustconc = currentDataPoint.dustconc/100;
         tableUpdate(attitude, heading, altimeter);
-    });*/
+    });
 
-    var buf = new Buffer('117109a40002041e0000182f010329e68feddb694951000055abcd', 'hex');
-
-    setInterval(function(){
-        //console.log(payload.parse(buf));
-        currentDataPoint = payload.parse(buf);
-        tableUpdate(attitude, heading, altimeter);
-    }, 500);
-
-    var port = 1;
     return port; 
 };
 
@@ -63,20 +60,19 @@ export var getDataPoint = function () {
 };
 
 var tableUpdate = function (attitude, heading, altimeter) {
-    document.getElementById('cell1').innerText = (currentDataPoint.voltage_cell1/1000) + " V";
-    document.getElementById('cell2').innerText = (currentDataPoint.voltage_cell2/1000) + " V";
-    document.getElementById('cell3').innerText = (currentDataPoint.voltage_cell3/1000) + " V";
+    document.getElementById('cell1').innerText = (currentDataPoint.voltage_cell1.toFixed(2)) + " V";
+    document.getElementById('cell2').innerText = (currentDataPoint.voltage_cell2.toFixed(2)) + " V";
+    document.getElementById('cell3').innerText = (currentDataPoint.voltage_cell3.toFixed(2)) + " V";
     document.getElementById('cell4').innerText = "-";
-
     document.getElementById('total-current').innerHTML = currentDataPoint.current + " A";
-    document.getElementById('total-cell').innerHTML = ((currentDataPoint.voltage_cell3 + currentDataPoint.voltage_cell2 + currentDataPoint.voltage_cell1)/1000) + " V";
+    document.getElementById('total-cell').innerHTML = ((currentDataPoint.voltage_cell3 + currentDataPoint.voltage_cell2 + currentDataPoint.voltage_cell1).toFixed(2)) + " V";
 
     document.getElementById('pressure').innerText = currentDataPoint.pressure + " Pa";
     document.getElementById('altitude').innerText = currentDataPoint.altitude + " m";
-    document.getElementById('temperature').innerText = (currentDataPoint.temperature/100) + " Celsius";
-    document.getElementById('windspeed').innerText = "-" ;//stubbed out
-    document.getElementById('gas').innerText = "-";//stubbed out
-    document.getElementById('humidity').innerText = (currentDataPoint.humidity/100)  + " %";
+    document.getElementById('temperature').innerText = (currentDataPoint.temperature) + " Celsius";
+    document.getElementById('windspeed').innerText = (currentDataPoint.windspeed);//stubbed out
+    document.getElementById('gas').innerText = (currentDataPoint.dustconc) + "mg/m3";//stubbed out
+    document.getElementById('humidity').innerText = (currentDataPoint.humidity)  + " %";
     document.getElementById('yaw').innerText = currentDataPoint.heading + " deg";
 
     /*

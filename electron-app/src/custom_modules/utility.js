@@ -105,10 +105,10 @@ export var connectRoutine = function (SerialInit, attitude, heading, altimeter) 
             return;
         }
         
-        /*if(selCOMport == "COM port"){
+        if(selCOMport == "COM port"){
             consoleError('No COM port selected');
             return;
-        }*/
+        }
 
         //Connect to camera
         consoleLog('Connecting to camera...');

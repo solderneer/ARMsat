@@ -17,7 +17,7 @@ import {date,
         listSerialDevices, 
         connectRoutine, 
         consoleSuccess} from './custom_modules/utility';
-import {graphInit, graphAddDatapoint} from './custom_modules/graph'
+import {graphInit, graphAddDatapoint, Chart1} from './custom_modules/graph'
 import {SerialInit, getDataPoint} from './custom_modules/serialpull';
 var JsonDB = require('node-json-db');
 const CsvDb = require('csv-db');
@@ -26,6 +26,8 @@ console.log('Loaded environment variables:', env);
 
 var app = remote.app;
 var appDir = jetpack.cwd(app.getAppPath());
+var currentPlot = 0;
+var buf = [0x0];
 
 console.log('The author of this app is:', appDir.read('package.json', 'json').author);
 
@@ -50,11 +52,6 @@ document.addEventListener('DOMContentLoaded', function () {
     var increment = 0;
     graphInit();
 
-    setInterval(function(){
-        graphAddDatapoint(30*Math.sin(increment/10));
-        increment++;
-    }, 50);
-
     document.getElementById("connect-btn").addEventListener('click', function (e) {
         
             if(document.getElementsByClassName('lessright')[0] == null){
@@ -68,19 +65,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     if (e.keyCode == '38') {
                         console.log('up');
+                        buf = Buffer.from([0x1]);
                     }
                     else if (e.keyCode == '40') {
                         console.log('down');
+                        buf = Buffer.from([0x2]);
                     }
                     else if (e.keyCode == '37') {
                         console.log('left');
+                        buf = Buffer.from([0x3]);
                     }
                     else if (e.keyCode == '39') {
                         console.log('right');
+                        buf = Buffer.from([0x4]);
                     }
-
                 }
-                
                 var currentDataType;
                 //datalogger things
                  $('.dropdown-data li > a').click(function (e){
@@ -147,7 +146,55 @@ document.addEventListener('DOMContentLoaded', function () {
                         document.getElementById("logging").innerText = "Start Logging";
                         document.getElementById("logging").className = "btn btn-success button-style";
                         clearInterval(window.logger);
-                        consoleSuccess("Stopped daatalogger")
+                        consoleSuccess("Stopped datalogger")
+                    }
+                });
+
+                //graphing things
+                 $('.dropdown-graph li > a').click(function (e){
+                    $('.btnStatus').html(this.innerHTML+' <span class="caret"></span>');
+                    currentPlot = this.innerHTML;
+                    console.log(currentPlot);
+                });
+
+                document.getElementById("graphing-but").addEventListener('click', function (e) {
+                     if(document.getElementById("graphing-but").innerText == "Start Graphing"){
+                        consoleLog("Grapher starting");
+                        Chart1.data.datasets[0].label = currentPlot;
+
+                        if(currentPlot == 0) {
+                            consoleError("No graphpoint selected");
+                        }
+                        else if(currentPlot == 'Wind Speed') {
+                            window.grapher = setInterval(function () {
+                                                    graphAddDatapoint(getDataPoint().windspeed);
+                                                }, 50);
+                        }
+                        else if(currentPlot == 'Dust concentration') {
+                            window.grapher = setInterval(function () {
+                                                    graphAddDatapoint(getDataPoint().dustconc);
+                                                }, 50);
+                        }
+                        else {
+                            var currentplot = currentPlot.toLowerCase();
+                            window.grapher = setInterval(function () {
+                                                    graphAddDatapoint(getDataPoint()[currentplot]);
+                                                }, 50);
+                        }
+
+                        document.getElementById("graphing-but").innerText = "Stop Graphing";
+                        document.getElementById("graphing-but").className = "btn btn-danger button-style";
+                        consoleSuccess("Started grapher");
+
+                     }
+                    else if(document.getElementById("graphing-but").innerText == "Stop Graphing"){
+                        consoleLog("Stopping grapher");
+                        clearInterval(window.grapher);
+                        Chart1.data.datasets[0].data = [0];
+                        Chart1.update();
+                        document.getElementById("graphing-but").innerText = "Start Graphing";
+                        document.getElementById("graphing-but").className = "btn btn-success button-style";
+                        consoleSuccess("Stopped grapher");
                     }
                 });
             }
