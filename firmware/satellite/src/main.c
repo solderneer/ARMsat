@@ -86,9 +86,6 @@ int main(void) {
 	MX_USART2_UART_Init();
 	MX_USART6_UART_Init();
 
-	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
-	__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_1, 0xF7CF);
-
 	SID_UART_Receive_IT_Setup(&XBEE_UART);
 	Servo_Init(&htim1, panPos, tiltPos);
 	MPU6050_Init(mpud, MPU6050_Device_0, MPU6050_Accelerometer_2G, MPU6050_Gyroscope_250s, &hi2c1);
@@ -221,7 +218,7 @@ int main(void) {
 				float v1 = (float)val;
 				v1 = -0.0006*(v1 * v1) + 1.0727f * v1 + 47.172f;
 				v1 *= 0.0048828125f;
-				zeroWind_volts = v1 + 1.2f;
+				zeroWind_volts = v1 + 0.7f;
 				adc_chan = ADC_CHANNEL_1;
 				break;
 			case ADC_CHANNEL_1: //wind RV
@@ -278,7 +275,7 @@ int main(void) {
 					dust_concf *= 2.400;
 					dust_concf /= 6.75f;
 					dust_concf -= 0.05f;
-					dust_concf *= 10;
+					dust_concf *= 1000;
 					dust_conc = (uint32_t)dust_concf;
 				}
 				adc_chan = ADC_CHANNEL_15;

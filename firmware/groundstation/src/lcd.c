@@ -117,6 +117,12 @@ void LCD_refreshFrame(void) {
 		LCD_setCursor(3,0);
 		LCD_print("Current:");
 		break;
+	case 3:
+		LCD_setCursor(0,0);
+		LCD_print("Wind:");
+		LCD_setCursor(1,0);
+		LCD_print("Dust:");
+		break;
 	default:
 		LCD_setCursor(0,0);
 		LCD_print("Hello World!");

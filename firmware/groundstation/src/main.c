@@ -59,6 +59,9 @@ uint32_t xbeeTick = 0;
 
 int humidity = 0;
 int temperature = 0;
+uint32_t altitude_sat = 0;
+int32_t altitude_delta = 0;
+int32_t pressure_sat = 0;
 
 uint8_t lcdKey = ' ';
 uint8_t newKey = ' ';
@@ -138,7 +141,8 @@ int main(void)
 		}
 		if(currTick - sensorTick > 50) {
 			sensorTick = currTick;
-			//Pressure_get();
+			Pressure_get();
+			altitude_delta = (int32_t)(altitude_sat - altitude + 1);
 			HMC_calculate();
 			newKey = LCD_keypad();
 			if(newKey != lcdKey) {
@@ -161,6 +165,12 @@ int main(void)
 							LCD_refreshFrame();
 						}
 						break;
+					case '4':
+						if(lcdFrame != 3) {
+							lcdFrame = 3;
+							LCD_refreshFrame();
+						}
+						break;
 					case '#':
 						analogControl = !analogControl;
 						if(analogControl == 0) {
@@ -180,11 +190,14 @@ int main(void)
 					case '0': //down
 						if(joystick_y>249) joystick_y -= 250;
 						break;
+					case '9':
+						analogControl = !analogControl;
+						break;
 				}
 				lcdKey = newKey;
 			}
 		}
-		if(currTick - lcdTick > 500) {
+		if(currTick - lcdTick > 250) {
 			lcdTick = currTick;
 			uint8_t buf[10] = {0};
 			switch(lcdFrame) {
@@ -203,13 +216,13 @@ int main(void)
 				LCD_command(temperature<2500?128:129);
 
 				LCD_setCursor(2,10);
-				sprintf(&buf, "%uPa  ", pressure);
+				sprintf(&buf, "%uPa  ", pressure_sat);
 				LCD_print(&buf);
 				LCD_setCursor(2,19);
 				LCD_command(131);
 
 				LCD_setCursor(3,10);
-				sprintf(&buf, "%um  ", altitude);
+				sprintf(&buf, altitude_delta>=0?"%dm  ":"<0m", altitude_delta);
 				LCD_print(&buf);
 				LCD_setCursor(3,19);
 				LCD_command(130);
@@ -269,21 +282,34 @@ int main(void)
 				LCD_setCursor(3,19);
 				LCD_command(voltage_cell3<1000?128:129);
 				break;
+			case 3:
+				LCD_setCursor(0,10);
+				sprintf(&buf, "%u rel.   ", wind_speed);
+				LCD_print(&buf);
+				LCD_setCursor(0,19);
+				LCD_command(voltage_cell1>3600?128:129);
+
+				LCD_setCursor(1,10);
+				sprintf(&buf, "%u rel.   ", dust_conc);
+				LCD_print(&buf);
+				LCD_setCursor(1,19);
+				LCD_command(voltage_cell2>3600?128:129);
+				break;
 			}
 		}
-		if(currTick - pcWriteTick > 100) {
+		if(currTick - pcWriteTick > 200) {
 			pcWriteTick = currTick;
 			uint8_t data[27] = {0xab,0xcd,
 					((uint16_t)humidity)>>8,
 					((uint16_t)humidity&0xff),
 					((uint16_t)temperature>>8),
 					((uint16_t)temperature&0xff),
-					((uint32_t)pressure>>24),
-					(((uint32_t)pressure)>>16)&0xff,
-					(((uint32_t)pressure)>>8)&0xff,
-					((uint32_t)pressure)&0xff,
-					(uint16_t)altitude>>8,
-					(uint16_t)altitude&0xff,
+					((uint32_t)pressure_sat>>24),
+					(((uint32_t)pressure_sat)>>16)&0xff,
+					(((uint32_t)pressure_sat)>>8)&0xff,
+					((uint32_t)pressure_sat)&0xff,
+					(uint16_t)altitude_delta>>8,
+					(uint16_t)altitude_delta&0xff,
 					(uint16_t)smoothHeadingDegrees>>8,
 					(uint16_t)smoothHeadingDegrees&0xff,
 					(uint16_t)dust_conc>>8,
@@ -390,8 +416,8 @@ int main(void)
 void decodePayload_callback(payload_data_rx* p) {
 	temperature = (typeof(temperature))p->temperature;
 	humidity = (typeof(humidity))p->humidity;
-	pressure = (typeof(pressure))p->pressure;
-	altitude = (typeof(altitude))p->altitude;
+	pressure_sat = (typeof(pressure_sat))p->pressure;
+	altitude_sat = (typeof(altitude_sat))p->altitude;
 	normHMC.x = (typeof(normHMC.x))p->hmc_x;
 	normHMC.y = (typeof(normHMC.y))p->hmc_y;
 	normHMC.z = (typeof(normHMC.z))p->hmc_z;
