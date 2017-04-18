@@ -1,5 +1,19 @@
 # ARMsat
 
+## Quick start
+The best way to get what this project is about in a few seconds is to open the ARMsat-poster.pdf. This project is now officially "complete" so don't expect much more work done on it.
+
+To set up the app: 
+```
+npm install
+npm run start
+```
+To build the distributable version after installing dependencies
+```
+npm run prerelease
+npm run release
+```
+
 ## Introduction
 A nano satellite platform built using a STM32F4 and numerous additional sensors and peripherals. This is for the module project for the [EG1310](https://myaces.nus.edu.sg/cors/jsp/report/ModuleDetailedInfo.jsp?acad_y=2015/2016&sem_c=1&mod_c=EG1310) module in the National University of Singapore. I'll just be documenting the progress for actually building a 32-bit architecture based BalloonSat here in hopes that it might be useful to someone. The module's final project requires us to fly the BalloonSat on a weather balloon to test its reliability and functionality.
 
