@@ -1,4 +1,6 @@
 # ARMsat
+## Flight video
+Flight video is now live [here](https://youtu.be/ptW_69Gpk8c). The video is quite clippy and that's because of the cheap china video recorder that we used but other than that, everything works beatifully!
 
 ## Quick start
 The best way to get what this project is about in a few seconds is to open the ARMsat-poster.pdf. This project is now officially "complete" so don't expect much more work done on it.
